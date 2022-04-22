@@ -2,3 +2,4 @@
 /.bsp/
 /.idea/
 /target/
+/src/main/scala/RabbitMQ/tutorial/

@@ -1,3 +1,3 @@
-package Jixel.Alert
+package JixelAPIInterface.Alert
 
 case class JixelFileAttachment(id: String, fname: String)

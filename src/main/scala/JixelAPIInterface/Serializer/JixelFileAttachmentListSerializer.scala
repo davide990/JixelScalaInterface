@@ -1,6 +1,6 @@
-package Jixel.Serializer
+package JixelAPIInterface.Serializer
 
-import Jixel.Alert.{JixelFileAttachment, JixelFileAttachmentList}
+import JixelAPIInterface.Alert.{JixelFileAttachment, JixelFileAttachmentList}
 import net.liftweb.json.JsonAST.{JField, JObject, JValue}
 import net.liftweb.json.{Formats, JArray, JString, MappingException, Serializer, TypeInfo}
 

@@ -1,3 +1,3 @@
-package Jixel.Login
+package JixelAPIInterface.Login
 
 case class JixelCredential(token: String, user: JixelUser);

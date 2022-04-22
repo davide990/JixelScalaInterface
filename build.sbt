@@ -6,6 +6,9 @@ libraryDependencies += "org.apache.commons" % "commons-parent" % "53"
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.13"
 libraryDependencies += "net.liftweb" %% "lift-json" % "3.5.0"
 
+libraryDependencies += "com.rabbitmq" % "amqp-client" % "5.14.2"
+
+
 lazy val root = (project in file("."))
   .settings(
     name := "MusaJixelInterface"

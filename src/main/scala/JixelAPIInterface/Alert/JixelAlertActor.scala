@@ -1,4 +1,4 @@
-package Jixel.Alert
+package JixelAPIInterface.Alert
 
 case class JixelAlertActor(id: Int,
                             description: String,

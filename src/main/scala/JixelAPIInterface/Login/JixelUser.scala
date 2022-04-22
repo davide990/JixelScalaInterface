@@ -1,4 +1,4 @@
-package Jixel.Login
+package JixelAPIInterface.Login
 
 case class JixelUser(id: Int,
                      organisation_id: Int,

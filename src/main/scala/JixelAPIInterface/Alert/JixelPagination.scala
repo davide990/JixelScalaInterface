@@ -1,4 +1,4 @@
-package Jixel.Alert
+package JixelAPIInterface.Alert
 
 case class JixelPagination(finder: String,
                            page: Integer,

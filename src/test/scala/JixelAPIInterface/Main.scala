@@ -1,5 +1,6 @@
-import Jixel.JixelInterface
-import Jixel.Login.ECOSUsers
+package JixelAPIInterface
+
+import JixelAPIInterface.Login.ECOSUsers
 
 object Main {
 

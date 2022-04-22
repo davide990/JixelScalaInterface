@@ -1,8 +1,8 @@
-package Jixel
+package JixelAPIInterface
 
-import Jixel.Alert.{JixelAlert, JixelAlertList, JixelFileAttachment}
-import Jixel.Login.{JixelCredential, LoginToken}
-import Jixel.Serializer.JixelFileAttachmentListSerializer
+import JixelAPIInterface.Alert.{JixelAlert, JixelAlertList, JixelFileAttachment}
+import JixelAPIInterface.Login.{JixelCredential, LoginToken}
+import JixelAPIInterface.Serializer.JixelFileAttachmentListSerializer
 import net.liftweb.json.Extraction.decompose
 import net.liftweb.json.{DefaultFormats, parse, prettyRender}
 import org.apache.http.HttpHeaders
