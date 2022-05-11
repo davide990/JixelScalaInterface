@@ -7,7 +7,7 @@ object JixelClientTest {
   val event = JixelEvent("12343", "incendio")
   val event2 = JixelEvent("56789", "incendio2")
 
-  val eventUpdate = JixelEventUpdate(event, JixelEventUpdateDetail("detail","blabla"))
+  val eventUpdate = JixelEventUpdate(event, JixelEventUpdateDetail(JixelEventUpdateTypology.EventDescription,"blabla"))
   val eventReport = JixelEventReport(event,List(JixelEventReportFileAttachments("file1","file.doc")))
 
   var jixel: JixelRabbitMQProducer = null

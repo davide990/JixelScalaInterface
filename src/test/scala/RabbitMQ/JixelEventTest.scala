@@ -4,7 +4,7 @@ import RabbitMQ.Serializer.JixelEventJsonSerializer
 
 object JixelEventTest {
   val fireInRefinery = JixelEvent("INCENDIO IN RAFFINERIA", "INCENDIO")
-  val fireInRefineryUpdate = JixelEventUpdate(fireInRefinery, JixelEventUpdateDetail("Description", "INCENDIO messo male"))
+  val fireInRefineryUpdate = JixelEventUpdate(fireInRefinery, JixelEventUpdateDetail(JixelEventUpdateTypology.EventDescription, "INCENDIO messo male"))
   val fireInRefineryReport1 = JixelEventReport(fireInRefinery, List(JixelEventReportFileAttachments("id_1", "fname_1.doc")))
   val fireInRefineryReport2 = JixelEventReport(fireInRefinery, List(JixelEventReportFileAttachments("id_1", "fname_1.doc"),
     JixelEventReportFileAttachments("id_2", "fname_2.doc")))
