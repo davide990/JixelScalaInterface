@@ -8,7 +8,6 @@ import net.liftweb.json.{Formats, JArray, JString, MappingException, Serializer,
 * refs:
 * https://stackoverflow.com/questions/7525875/polymorphic-lift-json-deserialization-in-a-composed-class
 * https://stackoverflow.com/questions/31676098/lift-json-custom-serializer-for-java-8-localdatetime-throwing-mapping-exception
-*
 */
 class JixelFileAttachmentListSerializer extends Serializer[JixelFileAttachmentList] {
   private val Class = classOf[JixelFileAttachmentList]

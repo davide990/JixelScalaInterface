@@ -15,7 +15,6 @@ object Main {
      */
     val jixelUser = JixelInterface.parseToJixelCredential(connectionResult)
 
-
     println(s"Login OK\n Logged user: ${jixelUser.user.username}\nName:${jixelUser.user.name}")
 
     /**

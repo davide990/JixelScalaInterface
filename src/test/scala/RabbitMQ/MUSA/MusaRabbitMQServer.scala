@@ -1,49 +1,67 @@
 package RabbitMQ.MUSA
 
+import RabbitMQ.Config.defaultConfig
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 
 import java.util.concurrent.CountDownLatch
 
-object MusaRabbitMQServer {
-  private val RPC_QUEUE_NAME = "rpc_queue"
-  private val hostAddress = "localhost"
 
-  def main(argv: Array[String]) {
+//https://pedrorijo.com/blog/scala-rabbitmq/
+object MusaRabbitMQServer {
+
+  /**
+   * MUSA >CONSUMER< WHEN USING rabbitmq_incoming_queue == "jixel2musa"
+   *
+   */
+  def main(argv: Array[String]): Unit = {
     var connection: Connection = null
     var channel: Channel = null
     try {
       val factory = new ConnectionFactory()
-      factory.setHost(hostAddress)
-      // Ask for up to 32 channels per connection. Will have an effect as long as the server is configured
-      // to use a higher limit, otherwise the server's limit will be used.
-      factory.setRequestedChannelMax(32)
 
+      factory.setHost(defaultConfig.rabbitmq_host)
+      factory.setUsername(defaultConfig.rabbitmq_username)
+      factory.setPassword(defaultConfig.rabbitmq_password)
+      factory.setPort(defaultConfig.rabbitmq_port)
+      factory.setVirtualHost(defaultConfig.rabbitmq_vhost)
 
       connection = factory.newConnection()
+
       channel = connection.createChannel()
-      channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null)
+
+      //This setting imposes a limit on the amount of data the server will deliver to consumers before requiring
+      // acknowledgements. In the example above, the server will only deliver 1 message and wait for the ack before
+      // delivering the next one. Thus, the server will always prefer to send messages to free receivers, making the
+      // workload better distributed.
       channel.basicQos(1)
+      //channel.confirmSelect
+
+      channel.exchangeDeclare(defaultConfig.exchangeName, "topic")
+
+      //jixel2musa in musa
+      channel.queueDeclare(defaultConfig.jixel2musaQueue, true, false, false, null)
+
+      channel.queuePurge(defaultConfig.jixel2musaQueue)
+
+      // binding coda<>exchange. l'exchange MUSA smistera i messaggi nella coda per la comunicazione verso jixel
+      // Musa subscribes to this queue to receive messages from jixel
+      channel.queueBind(defaultConfig.musa2jixelQueue, defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey)
+      channel.queueBind(defaultConfig.jixel2musaQueue, defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey)
+
       // stop after 100 consumed messages
-      //val latch = new CountDownLatch(100)
-      val serverCallback = new MUSAServerCallback(channel) //, latch)
+      val latch = new CountDownLatch(100)
 
-      channel.basicConsume(RPC_QUEUE_NAME, false, serverCallback, (_: String) => {})
+      val serverCallback = new MUSAConsumerCallback(channel, latch)
 
-      while (true) {
-        println(" [MUSA] Awaiting RPC requests from Jixel")
-        // we don't want to kill the receiver,
-        // so we keep him alive waiting for more messages
-        Thread.sleep(1000)
-      }
+      // if basicAck is used in callback, autoAck should be set to false
+      channel.basicConsume(defaultConfig.jixel2musaQueue, false, serverCallback, (_: String) => {})
 
-      //println(" [MUSA] Awaiting RPC requests from Jixel")
-      //latch.await()
+      println(Console.BLUE_B + Console.YELLOW + " [MUSA] Awaiting requests from Jixel..." + Console.RESET)
+
+      latch.await()
     } catch {
       case e: Exception => e.printStackTrace()
     } finally {
-      if (connection == null)
-        return
-
       try {
         connection.close()
       } catch {

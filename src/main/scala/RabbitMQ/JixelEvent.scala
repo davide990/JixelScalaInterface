@@ -1,5 +1,6 @@
 package RabbitMQ
 
+// In jixel, Event != alert.
 case class JixelEvent(id: String, eventType: String)
 
 case class JixelEventUpdateDetail(updateType: String, content: String)

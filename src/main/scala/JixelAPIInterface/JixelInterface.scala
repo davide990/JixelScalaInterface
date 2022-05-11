@@ -33,11 +33,8 @@ object JixelInterface {
     val response = client.execute(httpPost) // POST request
     val statusCode = response.getStatusLine.getStatusCode
     assert(statusCode == 200, s"Expected 200, received $statusCode") // Assert everything ok
-
-    getConnectionResultAsJson(response)
-    //response // return the response
+    getConnectionResultAsJson(response) // return the response
   }
-
 
   def requestAlertsList(token: String): JixelAlertList = {
     val httpGet = new HttpGet("https://nettunit.jixel.eu/api/alerts/all")
@@ -46,7 +43,6 @@ object JixelInterface {
     val response = client.execute(httpGet) // GET request
     parseAlertList(response)
   }
-
 
   /**
    * Convert the underlying entity in the input CloseableHttpResponse to a string
@@ -78,10 +74,8 @@ object JixelInterface {
    * @param alertListResponse
    * @return
    */
-  def parseAlertList(alertListResponse: CloseableHttpResponse): JixelAlertList = {
-    val jsonvalue = parse(getConnectionResultAsJson(alertListResponse).toString)
-    jsonvalue.extract[JixelAlertList]
-  }
+  def parseAlertList(alertListResponse: CloseableHttpResponse): JixelAlertList =
+    parse(getConnectionResultAsJson(alertListResponse).toString).extract[JixelAlertList]
 
   /**
    * Retrieve the list of all the attachments in the input alerts list
@@ -89,10 +83,8 @@ object JixelInterface {
    * @param alertList
    * @return
    */
-  def getAttachmentsList(alertList: JixelAlertList): List[JixelFileAttachment] = {
-    val l = alertList.alerts.map(a => a.controllable_object.attachment_file_names).toList
-    l.flatMap(x => x.list).toList
-  }
+  def getAttachmentsList(alertList: JixelAlertList): List[JixelFileAttachment] =
+    alertList.alerts.map(a => a.controllable_object.attachment_file_names).flatMap(x => x.list)
 
   /**
    * Retrieve the details of an alert
@@ -101,9 +93,8 @@ object JixelInterface {
    * @param alertList the list of alerts
    * @return
    */
-  def getAlertDetails(id: Int, alertList: JixelAlertList): Option[JixelAlert] = {
+  def getAlertDetails(id: Int, alertList: JixelAlertList): Option[JixelAlert] =
     alertList.alerts.find(alert => alert.id == id)
-  }
 
   /**
    * Download the attachment with the given ID from Jixel to file
@@ -118,6 +109,6 @@ object JixelInterface {
     response.getEntity.writeTo(new FileOutputStream(new File(outFname)));
   }
 
-  def closeConnection() : Unit = client.close()
+  def closeConnection(): Unit = client.close()
 
 }

@@ -5,7 +5,7 @@ import net.liftweb.json.Extraction.decompose
 import net.liftweb.json.JsonAST.{JField, JObject}
 import net.liftweb.json.{DefaultFormats, parse, prettyRender}
 
-object JixelEventSerializer {
+object JixelEventJsonSerializer {
   implicit val formats = DefaultFormats
 
   def toJSon(jixelEvent: JixelEvent): String = prettyRender(decompose(jixelEvent))

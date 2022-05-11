@@ -1,6 +1,6 @@
 package RabbitMQ
 
-import RabbitMQ.Serializer.JixelEventSerializer
+import RabbitMQ.Serializer.JixelEventJsonSerializer
 
 object JixelEventTest {
   val fireInRefinery = JixelEvent("INCENDIO IN RAFFINERIA", "INCENDIO")
@@ -10,15 +10,15 @@ object JixelEventTest {
     JixelEventReportFileAttachments("id_2", "fname_2.doc")))
 
   def main(args: Array[String]): Unit = {
-    val parsed = JixelEventSerializer.toJSon(fireInRefinery)
-    val parsedUpdate = JixelEventSerializer.toJSon(fireInRefineryUpdate)
-    val parsedReport1 = JixelEventSerializer.toJSon(fireInRefineryReport1)
-    val parsedReport2 = JixelEventSerializer.toJSon(fireInRefineryReport2)
+    val parsed = JixelEventJsonSerializer.toJSon(fireInRefinery)
+    val parsedUpdate = JixelEventJsonSerializer.toJSon(fireInRefineryUpdate)
+    val parsedReport1 = JixelEventJsonSerializer.toJSon(fireInRefineryReport1)
+    val parsedReport2 = JixelEventJsonSerializer.toJSon(fireInRefineryReport2)
 
-    val event = JixelEventSerializer.fromJson(parsed)
-    val eventUpdate = JixelEventSerializer.fromJson(parsedUpdate)
-    val eventReport1 = JixelEventSerializer.fromJson(parsedReport1)
-    val eventReport2 = JixelEventSerializer.fromJson(parsedReport2)
+    val event = JixelEventJsonSerializer.fromJson(parsed)
+    val eventUpdate = JixelEventJsonSerializer.fromJson(parsedUpdate)
+    val eventReport1 = JixelEventJsonSerializer.fromJson(parsedReport1)
+    val eventReport2 = JixelEventJsonSerializer.fromJson(parsedReport2)
 
     assert(fireInRefinery == event)
     assert(eventUpdate == fireInRefineryUpdate)
