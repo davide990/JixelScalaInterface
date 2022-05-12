@@ -1,17 +1,17 @@
 package RabbitMQ.Jixel
 
+import RabbitMQ.Producer.JixelRabbitMQProducer
 import RabbitMQ._
 
 object JixelClientTest {
 
   val event = JixelEvent("12343", "incendio")
   val event2 = JixelEvent("56789", "incendio2")
-
   val eventUpdate = JixelEventUpdate(event, JixelEventUpdateDetail(JixelEventUpdateTypology.EventDescription,"blabla"))
   val eventReport = JixelEventReport(event,List(JixelEventReportFileAttachments("file1","file.doc")))
 
-  var jixel: JixelRabbitMQProducer = null
 
+  var jixel: JixelRabbitMQProducer = null
   def main(argv: Array[String]) {
     var response: String = null
     try {

@@ -1,23 +1,12 @@
 package RabbitMQ
 
-//abstract class JixelEventUpdateTypology(id: Int)
-
 object JixelEventUpdateTypology {
+  // NOTE: Using val and not case object because these last cannot be serialized through lift unless custom serializer.
   val UrgencyLevel = 0x0
   val EventSeverity = 0x1
   val EventTypology = 0x2
   val EventDescription = 0x3
   val CommType = 0x4
-
-  /*case object UrgencyLevel extends JixelEventUpdateTypology(0x0)
-
-  case object EventSeverity extends JixelEventUpdateTypology(0x1)
-
-  case object EventTypology extends JixelEventUpdateTypology(0x2)
-
-  case object EventDescription extends JixelEventUpdateTypology(0x3)
-
-  case object CommType extends JixelEventUpdateTypology(0x4)*/
 }
 
 // In jixel, Event != alert.

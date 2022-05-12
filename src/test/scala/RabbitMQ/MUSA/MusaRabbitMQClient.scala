@@ -1,6 +1,6 @@
 package RabbitMQ.MUSA
 
-import RabbitMQ.Jixel.MUSARabbitMQProducer
+import RabbitMQ.Producer.MUSARabbitMQProducer
 import RabbitMQ._
 
 object MusaRabbitMQClient {

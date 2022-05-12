@@ -1,14 +1,23 @@
-package RabbitMQ.Jixel
+package RabbitMQ.Producer
 
 import RabbitMQ.Config.defaultConfig
-import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate, JixelEventUpdateDetail, JixelEventUpdateTypology, Recipient}
 import RabbitMQ.Serializer.JixelEventJsonSerializer
+import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate}
 import com.rabbitmq.client.AMQP.BasicProperties
-import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
+import com.rabbitmq.client._
 
 import java.util.UUID
 
-class MUSARabbitMQProducer {
+/**
+ * This is the Jixel part. This is supposed to be used by Anch'ioSegnalo for communicating to MUSA
+ *
+ * - notify(Event)
+ * - updateEvent(Event)
+ * - notifyReport(Event,Report)
+ *
+ * @param argv
+ */
+class JixelRabbitMQProducer(host: String) {
   val factory = new ConnectionFactory()
   factory.setHost(defaultConfig.rabbitmq_host)
   factory.setUsername(defaultConfig.rabbitmq_username)
@@ -45,31 +54,25 @@ class MUSARabbitMQProducer {
   channel.queueBind(defaultConfig.musa2jixelQueue, defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey)
 
   /**
-   * Notify an event to Jixel
+   * Notify an event to MUSA
    *
    * @param eventJSon
    */
   def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
 
-  def addRecipient(ev: JixelEvent, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
+  /**
+   * Communicate an update to an incident situation
+   *
+   * @param update
+   */
+  def updateEvent(update: JixelEventUpdate): String = call(JixelEventJsonSerializer.toJSon(update))
 
-  def updateUrgencyLevel(ev: JixelEvent, level: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.UrgencyLevel, level)))
-
-  def updateEventSeverity(ev: JixelEvent, severity: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventSeverity, severity)))
-
-  def updateEventTypology(ev: JixelEvent, typology: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventTypology, typology)))
-
-  def updateEventDescription(ev: JixelEvent, description: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventDescription, description)))
-
-  def updateCommType(ev: JixelEvent, commType: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.CommType, commType)))
-
-  private def getUpdateEntity(ev: JixelEvent, updateType: Int, content: String): JixelEventUpdate =
-    JixelEventUpdate(ev, JixelEventUpdateDetail(updateType, content))
+  /**
+   * Notify to MUSA a report received by emergency corps
+   *
+   * @param report
+   */
+  def notifyReport(report: JixelEventReport): String = call(JixelEventJsonSerializer.toJSon(report))
 
   /**
    * Sends a message (in Json form) to MUSA
@@ -84,12 +87,12 @@ class MUSARabbitMQProducer {
     // (see https://www.rabbitmq.com/tutorials/tutorial-six-java.html)
     val corrID = UUID.randomUUID.toString
 
-    val props = new BasicProperties.Builder().correlationId(corrID).replyTo(defaultConfig.jixel2musaQueue).build()
+    val props = new BasicProperties.Builder().correlationId(corrID).replyTo(defaultConfig.musa2jixelQueue).build()
 
-    //jixel publish to topic using the routing key "jixel.musa2jixel.*"
-    channel.basicPublish(defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey, props, jsonMessage.getBytes("UTF-8"))
+    //jixel publish to topic using the routing key "jixel.jixel2musa.*"
+    channel.basicPublish(defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey, props, jsonMessage.getBytes("UTF-8"))
 
-    println(s"[MUSA] published ${jsonMessage}\n[MUSA]now waiting response...\n")
+    println(s"[JIXEL] published ${jsonMessage}\n[JIXEL]now waiting response...\n")
 
     // wait for ack message...
     channel.waitForConfirms(defaultConfig.maxWaitForAck).toString
@@ -98,5 +101,5 @@ class MUSARabbitMQProducer {
   def close() {
     connection.close()
   }
-
 }
+

@@ -1,4 +1,4 @@
-package RabbitMQ.MUSA
+package RabbitMQ.ConsumerCallback
 
 import RabbitMQ.Serializer.JixelEventJsonSerializer
 import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate}
