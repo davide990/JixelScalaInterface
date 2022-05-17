@@ -34,7 +34,7 @@ class MUSARabbitMQConsumer {
     //jixel2musa in musa
     channel.queueDeclare(defaultConfig.jixel2musaQueue, true, false, false, null)
 
-    channel.queuePurge(defaultConfig.jixel2musaQueue)
+    //channel.queuePurge(defaultConfig.jixel2musaQueue)
 
     // binding coda<>exchange. l'exchange MUSA smistera i messaggi nella coda per la comunicazione verso jixel
     // Musa subscribes to this queue to receive messages from jixel

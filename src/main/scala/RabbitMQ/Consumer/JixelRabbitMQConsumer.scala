@@ -34,7 +34,7 @@ class JixelRabbitMQConsumer {
       //musa2jixel queue used in jixel
       channel.queueDeclare(defaultConfig.musa2jixelQueue, true, false, false, null)
 
-      channel.queuePurge(defaultConfig.musa2jixelQueue)
+      //channel.queuePurge(defaultConfig.musa2jixelQueue)
 
       // binding coda<>exchange. l'exchange MUSA smistera i messaggi nella coda per la comunicazione verso jixel
       // Musa subscribes to this queue to receive messages from jixel
