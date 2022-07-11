@@ -4,11 +4,14 @@ import JixelAPIInterface.Alert.{JixelFileAttachment, JixelFileAttachmentList}
 import net.liftweb.json.JsonAST.{JField, JObject, JValue}
 import net.liftweb.json.{Formats, JArray, JString, MappingException, Serializer, TypeInfo}
 
-/*
-* refs:
-* https://stackoverflow.com/questions/7525875/polymorphic-lift-json-deserialization-in-a-composed-class
-* https://stackoverflow.com/questions/31676098/lift-json-custom-serializer-for-java-8-localdatetime-throwing-mapping-exception
-*/
+/**
+ * This class is used to parse file attachments in jixel events. Because file attachments are
+ * in polymorphic JSon format, it requires a specific parsing rule, which is found in this class.
+ *
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ * @see See [[https://stackoverflow.com/questions/7525875/polymorphic-lift-json-deserialization-in-a-composed-class]] and [[https://stackoverflow.com/questions/31676098/lift-json-custom-serializer-for-java-8-localdatetime-throwing-mapping-exception]]
+ *
+ */
 class JixelFileAttachmentListSerializer extends Serializer[JixelFileAttachmentList] {
   private val Class = classOf[JixelFileAttachmentList]
 

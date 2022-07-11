@@ -1,5 +1,7 @@
 package JixelAPIInterface.Login
-
+/**
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ */
 case class JixelUser(id: Int,
                      organisation_id: Int,
                      username: String,
@@ -20,7 +22,7 @@ case class JixelUser(id: Int,
                      relatives: String,
                      blood_group: String,
                      language_id: Int,
-                     wiki_key: Object,
+                     wiki_key: String,
                      privacy: Boolean,
                      conditions: Boolean,
                      last_change_password: Object,

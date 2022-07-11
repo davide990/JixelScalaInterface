@@ -1,29 +1,51 @@
 package RabbitMQ.ConsumerCallback
 
+import RabbitMQ.Listener.MUSAConsumerListener
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate}
+import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate, Recipient}
 import com.rabbitmq.client._
 
 import java.util.concurrent.CountDownLatch
 
-class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch) extends DeliverCallback {
+/**
+ * Callback invoked when a message is received by MUSA on its rabbitMQ queue.
+ *
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ * @param ch
+ * @param latch
+ * @param listener
+ */
+class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val listener: Option[MUSAConsumerListener] = Option.empty) extends DeliverCallback {
 
   override def handle(consumerTag: String, delivery: Delivery): Unit = {
+    //Get the content of the message
     val message = new String(delivery.getBody, "UTF-8")
     try {
-      // handle the parsed message
+      // parse the message
       val parsed = JixelEventJsonSerializer.fromJson(message)
+      // invoke the listener
       parsed match {
-        case _: JixelEvent => println("[MUSA] received an event from Jixel")
-        case _: JixelEventUpdate => println("[MUSA] received an event update from Jixel")
-        case _: JixelEventReport => println("[MUSA] received an event report from Jixel")
-        case _ => throw new Exception("unhandled message")
+        case ev: JixelEvent => {
+          listener.map(l => l.onNotifyEvent(ev))
+          println("[MUSA] received an event from Jixel")
+        }
+        case eu: JixelEventUpdate => {
+          listener.map(l => l.onEventUpdate(eu))
+          println("[MUSA] received an event update from Jixel")
+        }
+        case r: JixelEventReport => {
+          listener.map(l => l.onReceiveJixelReport(r))
+          println("[MUSA] received an event report from Jixel")
+        }
+        case r: Recipient => {
+          listener.map(l => l.onAddRecipient(r))
+          println("[MUSA] added recipient")
+        }
+        case _ => throw new Exception(s"[MUSA] Unhandled message: ${parsed}")
       }
     } catch {
       case e: Exception => println(s"[MUSA] ERROR, cannot parse ${message}: ${e.toString}")
     } finally {
-
-
       println(Console.GREEN_B + Console.WHITE + "[MUSA] acknowledge to Jixel")
       // ack the message received from jixel.
       ch.basicAck(delivery.getEnvelope.getDeliveryTag, false)

@@ -5,27 +5,33 @@ import net.liftweb.json.Extraction.decompose
 import net.liftweb.json.JsonAST.{JField, JObject}
 import net.liftweb.json.{DefaultFormats, parse, prettyRender}
 
+/**
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ */
 object JixelEventJsonSerializer {
   implicit val formats = DefaultFormats
 
-  /*def toJSon(jixelEvent: JixelEvent): String = prettyRender(decompose(jixelEvent))
-
-  def toJSon(jixelEvent: JixelEventUpdate): String = prettyRender(decompose(jixelEvent))
-
-  def toJSon(jixelEvent: JixelEventReport): String = prettyRender(decompose(jixelEvent))*/
-
   def toJSon(entity: Any): String = prettyRender(decompose(entity))
 
-  /*case class JixelEventUpdate(event: JixelEvent, update: JixelEventUpdateDetail)
-
-case class JixelEventUpdateDetail(updateType: JixelEventUpdateTypology, content: String)*/
   def fromJson(j: String): Any = {
     val ll = parse(j)
     ll match {
-      case JObject(List(JField("id", _), JField("eventType", _))) => ll.extract[JixelEvent]
+      /** ************************************* JIXEL EVENT ********************************************************* */
+      case JObject(List(JField("id", _), JField("incident_msgtype", _), JField("incident_type", _),
+      JField("incident_status", _), JField("incident_urgency", _),
+      JField("incident_severity", _), JField("headline", _), JField("description", _),
+      JField("caller_name", _), JField("caller_phone", _), JField("instructions", _),
+      JField("locations", _), JField("controllable_object", _), JField("recipients", _),
+      JField("voluntary_organisations", _))) => ll.extract[JixelEvent]
+
+      /** ************************************* JIXEL EVENT UPDATE ************************************************** */
       case JObject(List(JField("event", _), JField("update", _))) => ll.extract[JixelEventUpdate]
+
+      /** ************************************* JIXEL EVENT REPORT ************************************************** */
       case JObject(List(JField("event", _), JField("files", _))) => ll.extract[JixelEventReport]
-      case JObject(List(JField("event", _), JField("recipient",_))) => ll.extract[Recipient]
+
+      /** ************************************* JIXEL RECIPIENT ***************************************************** */
+      case JObject(List(JField("event", _), JField("recipient", _))) => ll.extract[Recipient]
       case _ => throw new Exception("Not parsable")
     }
   }

@@ -16,8 +16,9 @@ import java.util.UUID
  * - notifyReport(Event,Report)
  *
  * @param argv
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
  */
-class JixelRabbitMQProducer(host: String) {
+class JixelRabbitMQProducer extends JixelProducer {
   val factory = new ConnectionFactory()
   factory.setHost(defaultConfig.rabbitmq_host)
   factory.setUsername(defaultConfig.rabbitmq_username)

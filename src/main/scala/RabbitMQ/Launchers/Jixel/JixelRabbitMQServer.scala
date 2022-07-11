@@ -1,4 +1,4 @@
-package RabbitMQ.Jixel
+package RabbitMQ.Launchers.Jixel
 
 import RabbitMQ.Consumer.JixelRabbitMQConsumer
 
@@ -11,7 +11,7 @@ object JixelRabbitMQServer {
   def main(argv: Array[String]): Unit = {
     val consumer = new JixelRabbitMQConsumer()
     consumer.init()
-    consumer.startConsumerAndAwait(100)
+    consumer.startConsumerAndAwait(100,Option.empty)
   }
 }
 

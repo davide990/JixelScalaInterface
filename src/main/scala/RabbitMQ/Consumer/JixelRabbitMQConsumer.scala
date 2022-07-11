@@ -2,10 +2,16 @@ package RabbitMQ.Consumer
 
 import RabbitMQ.Config.defaultConfig
 import RabbitMQ.ConsumerCallback.JixelConsumerCallback
+import RabbitMQ.Listener.JixelConsumerListener
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 
 import java.util.concurrent.CountDownLatch
 
+/**
+ * Consumer for Jixel
+ *
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ */
 class JixelRabbitMQConsumer {
   private var connection: Connection = null
   private var channel: Channel = null
@@ -38,18 +44,20 @@ class JixelRabbitMQConsumer {
 
       // binding coda<>exchange. l'exchange MUSA smistera i messaggi nella coda per la comunicazione verso jixel
       // Musa subscribes to this queue to receive messages from jixel
-      channel.queueBind(defaultConfig.musa2jixelQueue, defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey)
+      //channel.queueBind(defaultConfig.musa2jixelQueue, defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey)
       channel.queueBind(defaultConfig.jixel2musaQueue, defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey)
+    }
+    catch {
+      case x: Exception => println("Unable to run consumer: " + x)
     }
   }
 
-
-  def startConsumerAndAwait(messageCount: Int): Unit = {
+  def startConsumerAndAwait(messageCount: Int, listener: Option[JixelConsumerListener] = Option.empty): Unit = {
     try {
       // stop after 100 consumed messages
       val latch = new CountDownLatch(messageCount)
 
-      val serverCallback = new JixelConsumerCallback(channel, latch)
+      val serverCallback = new JixelConsumerCallback(channel, latch, listener)
 
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.musa2jixelQueue, false, serverCallback, (_: String) => {})
@@ -68,4 +76,5 @@ class JixelRabbitMQConsumer {
     }
 
   }
+
 }

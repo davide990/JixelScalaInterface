@@ -1,6 +1,6 @@
 package JixelAPIInterface
 
-import JixelAPIInterface.Login.ECOSUsers
+import JixelAPIInterface.Login.{ECOSUsers, JixelCredential}
 
 object Main {
 
@@ -17,6 +17,25 @@ object Main {
 
     println(s"Login OK\n Logged user: ${jixelUser.user.username}\nName:${jixelUser.user.name}")
 
+    testGetAlertList(jixelUser)
+
+    testGetEvent(jixelUser)
+
+    print("OK")
+
+    /**
+     * Close the connection
+     */
+    JixelInterface.closeConnection()
+    print("All done...")
+  }
+
+  def testGetEvent(jixelUser: JixelCredential): Unit = {
+    val eventDetail69 = JixelInterface.requestEventDetail(jixelUser.token, 69)
+    val eventList = JixelInterface.requestEventList(jixelUser.token)
+  }
+
+  def testGetAlertList(jixelUser: JixelCredential): Unit = {
     /**
      * Retrieve the alerts list from Jixel
      */
@@ -39,11 +58,6 @@ object Main {
       jixelUser.token,
       "/Users/dguastel/Desktop/output.png")
 
-    /**
-     * Close the connection
-     */
-    JixelInterface.closeConnection()
-    print("All done...")
   }
 
 

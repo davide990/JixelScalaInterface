@@ -1,29 +1,37 @@
-package RabbitMQ.Jixel
+package RabbitMQ.Launchers.Jixel
 
+import JixelAPIInterface.JixelInterface
+import JixelAPIInterface.Login.ECOSUsers
 import RabbitMQ.Producer.JixelRabbitMQProducer
 import RabbitMQ._
+import Utils.JixelUtil
 
 object JixelClientTest {
 
-  val event = JixelEvent("12343", "incendio")
-  val event2 = JixelEvent("56789", "incendio2")
-  val eventUpdate = JixelEventUpdate(event, JixelEventUpdateDetail(JixelEventUpdateTypology.EventDescription,"blabla"))
-  val eventReport = JixelEventReport(event,List(JixelEventReportFileAttachments("file1","file.doc")))
+  //val event = JixelEvent("12343", "incendio")
+  //val event2 = JixelEvent("56789", "incendio2")
+  //val eventUpdate = JixelEventUpdate(event, JixelEventUpdateDetail(JixelEventUpdateTypology.EventDescription, "blabla"))
+  //val eventReport = JixelEventReport(event, List(JixelEventReportFileAttachments("file1", "file.doc")))
+
 
 
   var jixel: JixelRabbitMQProducer = null
+
   def main(argv: Array[String]) {
     var response: String = null
     try {
-      val host = if (argv.isEmpty) "localhost" else argv(0)
-      jixel = new JixelRabbitMQProducer(host)
+      jixel = new JixelRabbitMQProducer
+      val login = ECOSUsers.davide_login
+      val jixelUser = JixelInterface.parseToJixelCredential(JixelInterface.connect(login))
+      val ev = JixelUtil.eventFromEventSummary(login, Utils.JixelUtil.getAnyJixelEvent(login));
+      response = jixel.notifyEvent(ev)
 
       //Notify event
-      println(" [x] notifying event")
-      response = jixel.notifyEvent(event)
+      //println(" [x] notifying event")
+      //response = jixel.notifyEvent(event)
       println(" [.] Got '" + response + "' from MUSA")
-      Thread.sleep(1000)
-
+      //Thread.sleep(1000)
+/*
       println(" [x] notifying event 2")
       response = jixel.notifyEvent(event2)
       println(" [.] Got '" + response + "' from MUSA")
@@ -44,7 +52,7 @@ object JixelClientTest {
       println(" [x] notifying report(s)")
       response = jixel.notifyReport(eventReport)
       println(" [.] Got '" + response + "' from MUSA")
-
+*/
     } catch {
       case e: Exception => e.printStackTrace()
     } finally {
@@ -54,12 +62,10 @@ object JixelClientTest {
       try {
         jixel.close()
       } catch {
-        case _: Exception =>
+        case x: Exception => println(x)
       }
     }
   }
-
-
 
 
 }

@@ -1,5 +1,8 @@
 package JixelAPIInterface.Alert
 
+/**
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ */
 case class JixelAlert(id: Int,
                       code: String,
                       date: String,

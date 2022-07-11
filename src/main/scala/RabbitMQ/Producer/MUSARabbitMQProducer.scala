@@ -8,7 +8,10 @@ import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 
 import java.util.UUID
 
-class MUSARabbitMQProducer {
+/**
+ * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
+ */
+class MUSARabbitMQProducer extends MUSAProducer{
   val factory = new ConnectionFactory()
   factory.setHost(defaultConfig.rabbitmq_host)
   factory.setUsername(defaultConfig.rabbitmq_username)
@@ -49,23 +52,23 @@ class MUSARabbitMQProducer {
    *
    * @param eventJSon
    */
-  def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
+  override def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
 
-  def addRecipient(ev: JixelEvent, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
+  override def addRecipient(ev: JixelEvent, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
 
-  def updateUrgencyLevel(ev: JixelEvent, level: String): String =
+  override def updateUrgencyLevel(ev: JixelEvent, level: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.UrgencyLevel, level)))
 
-  def updateEventSeverity(ev: JixelEvent, severity: String): String =
+  override def updateEventSeverity(ev: JixelEvent, severity: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventSeverity, severity)))
 
-  def updateEventTypology(ev: JixelEvent, typology: String): String =
+  override def updateEventTypology(ev: JixelEvent, typology: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventTypology, typology)))
 
-  def updateEventDescription(ev: JixelEvent, description: String): String =
+  override def updateEventDescription(ev: JixelEvent, description: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventDescription, description)))
 
-  def updateCommType(ev: JixelEvent, commType: String): String =
+  override def updateCommType(ev: JixelEvent, commType: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.CommType, commType)))
 
   private def getUpdateEntity(ev: JixelEvent, updateType: Int, content: String): JixelEventUpdate =

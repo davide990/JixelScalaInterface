@@ -1,4 +1,4 @@
-package RabbitMQ.MUSA
+package RabbitMQ.Launchers.MUSA
 
 import RabbitMQ.Consumer.MUSARabbitMQConsumer
 
@@ -7,13 +7,12 @@ import RabbitMQ.Consumer.MUSARabbitMQConsumer
 object MusaRabbitMQServer {
 
   /**
-   * MUSA >CONSUMER< WHEN USING rabbitmq_incoming_queue == "jixel2musa"
-   *
+   * Start MUSA as a consumer for messages received by Jixel
    */
   def main(argv: Array[String]): Unit = {
     val consumer = new MUSARabbitMQConsumer()
     consumer.init()
-    consumer.startConsumerAndAwait(100)
+    consumer.startConsumerAndAwait(100, Option.empty)
   }
 }
 
