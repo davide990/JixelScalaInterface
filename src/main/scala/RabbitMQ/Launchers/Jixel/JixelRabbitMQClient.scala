@@ -6,6 +6,8 @@ import RabbitMQ.Producer.JixelRabbitMQProducer
 import RabbitMQ._
 import Utils.JixelUtil
 
+
+//for testing only
 object JixelClientTest {
 
   //val event = JixelEvent("12343", "incendio")

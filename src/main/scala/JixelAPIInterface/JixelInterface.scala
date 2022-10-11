@@ -15,7 +15,7 @@ import org.apache.http.util.EntityUtils
 import java.io.{File, FileOutputStream}
 
 /**
- * Interface to jixel API. This class contains methods to connect to Jixel, obtaining alerts and events
+ * Interface to jixel internal API. This class contains methods to connect to Jixel, obtaining alerts and events
  *
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
  */
@@ -123,7 +123,6 @@ object JixelInterface {
     assert(statusCode == 200, s"Expected 200, received $statusCode") // Assert everything ok
     getConnectionResultAsJson(response) // return the response
   }
-
 
   /**
    * Convert the underlying entity in the input CloseableHttpResponse to a string

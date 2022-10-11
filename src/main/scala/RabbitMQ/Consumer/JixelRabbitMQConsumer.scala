@@ -8,7 +8,34 @@ import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 import java.util.concurrent.CountDownLatch
 
 /**
- * Consumer for Jixel
+ * Consumer for Jixel, used to process messages received from MUSA
+ *
+ * This class must be used jointly with Flowable to control the execution of contingency plans, following the exchange
+ * of information via Jixel. To do this, an instance of this class is created in the Flowable engine and associated with
+ * a [[JixelConsumerListener]] whose overridden methods invoke Flowable's methods to complete workflow tasks.
+ * For example:
+ * {{{
+ *   new JixelConsumerListener() {
+ *@Override
+ *public void onCreateEvent(JixelEvent event) {
+ *completeTask(event);
+ *}
+ *
+ *@Override
+ *public void onAddRecipient(Recipient r) {
+ *completeTask(r);
+ *}
+ *
+ *@Override
+ *public void onEventUpdate(JixelEventUpdate update) {
+ *completeTask(update);
+ *}
+ *
+ *}
+ * }}}
+ *
+ * Here, the consumer listener can be added to an istance of [[JixelRabbitMQConsumer()]], it will be invoked at each
+ * message received from Jixel.
  *
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
  */
@@ -56,14 +83,10 @@ class JixelRabbitMQConsumer {
     try {
       // stop after 100 consumed messages
       val latch = new CountDownLatch(messageCount)
-
       val serverCallback = new JixelConsumerCallback(channel, latch, listener)
-
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.musa2jixelQueue, false, serverCallback, (_: String) => {})
-
       println(Console.BLUE_B + Console.YELLOW + " [Jixel] Awaiting requests from MUSA..." + Console.RESET)
-
       latch.await()
     } catch {
       case e: Exception => e.printStackTrace()

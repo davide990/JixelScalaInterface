@@ -2,6 +2,7 @@ package RabbitMQ.Launchers.Jixel
 
 import RabbitMQ.Consumer.JixelRabbitMQConsumer
 
+//for testing only
 object JixelRabbitMQServer {
 
   /**

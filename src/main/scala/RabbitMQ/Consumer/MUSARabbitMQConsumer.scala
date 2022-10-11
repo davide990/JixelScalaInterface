@@ -8,7 +8,7 @@ import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 import java.util.concurrent.CountDownLatch
 
 /**
- * Consumer for MUSA.
+ * Consumer for MUSA, used to process messages received from Jixel.
  *
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
  */
@@ -57,14 +57,10 @@ class MUSARabbitMQConsumer {
     try {
       // stop after 100 consumed messages
       val latch = new CountDownLatch(messageCount)
-
       val serverCallback = new MUSAConsumerCallback(channel, latch, listener)
-
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.jixel2musaQueue, false, serverCallback, (_: String) => {})
-
       println(Console.BLUE_B + Console.YELLOW + " [MUSA] Awaiting messages from Jixel..." + Console.RESET)
-
       latch.await()
     } catch {
       case e: Exception => e.printStackTrace()

@@ -1,7 +1,6 @@
 package RabbitMQ.Producer
 
 import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate}
-import RabbitMQ.Serializer.JixelEventJsonSerializer
 
 trait JixelProducer {
   /**
