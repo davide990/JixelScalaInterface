@@ -1,20 +1,20 @@
 package RabbitMQ.Producer
 
-import RabbitMQ.JixelEventSummary
+import RabbitMQ.{JixelEvent}
 
 trait MUSAProducer {
 
-  def notifyEvent(event: JixelEventSummary): String
+  def notifyEvent(event: JixelEvent): String
 
-  def addRecipient(ev: JixelEventSummary, recipient: String): String
+  def addRecipient(ev: JixelEvent, recipient: String): String
 
-  def updateUrgencyLevel(ev: JixelEventSummary, level: String): String
+  def updateUrgencyLevel(ev: JixelEvent, level: String): String
 
-  def updateEventSeverity(ev: JixelEventSummary, severity: String): String
+  def updateEventSeverity(ev: JixelEvent, severity: String): String
 
-  def updateEventTypology(ev: JixelEventSummary, typology: String): String
+  def updateEventTypology(ev: JixelEvent, typology: String): String
 
-  def updateEventDescription(ev: JixelEventSummary, description: String): String
+  def updateEventDescription(ev: JixelEvent, description: String): String
 
-  def updateCommType(ev: JixelEventSummary, commType: String): String
+  def updateCommType(ev: JixelEvent, commType: String): String
 }

@@ -245,16 +245,16 @@ case class JixelControllableObjectActors(id: Integer,
                                          validation_level_id: Object,
                                          deleted: Object)
 
-case class JixelEventUpdate(event: JixelEventSummary, update: JixelEventUpdateDetail)
+case class JixelEventUpdate(event: JixelEvent, update: JixelEventUpdateDetail)
 
 case class JixelEventUpdateDetail(updateType: Int, content: String)
 
 case class JixelEventReportFileAttachments(fileID: String, fileName: String)
 
-case class JixelEventReport(event: JixelEventSummary, files: List[JixelEventReportFileAttachments])
+case class JixelEventReport(event: JixelEvent, files: List[JixelEventReportFileAttachments])
 
 // recipient should be of type JixelAlertActor
-case class Recipient(event: JixelEventSummary, recipient: String)
+case class Recipient(event: JixelEvent, recipient: String)
 
 case class ReadAckRequiredHead(read_ack_required: ReadAckRequired)
 

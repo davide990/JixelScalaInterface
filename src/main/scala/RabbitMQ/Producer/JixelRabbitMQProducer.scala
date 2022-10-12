@@ -2,7 +2,7 @@ package RabbitMQ.Producer
 
 import RabbitMQ.Config.defaultConfig
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{JixelEventSummary, JixelEventReport, JixelEventUpdate}
+import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate}
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client._
 
@@ -59,7 +59,14 @@ class JixelRabbitMQProducer extends JixelProducer {
    *
    * @param eventJSon
    */
-  def notifyEvent(event: JixelEventSummary): String = call(JixelEventJsonSerializer.toJSon(event))
+  def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
+
+  /**
+   * Notify an event to MUSA
+   *
+   * @param eventJSon
+   */
+  def notifyEventSummary(event: JixelEventSummary): String = call(JixelEventJsonSerializer.toJSon(event))
 
   /**
    * Communicate an update to an incident situation
@@ -99,7 +106,7 @@ class JixelRabbitMQProducer extends JixelProducer {
     channel.waitForConfirms(defaultConfig.maxWaitForAck).toString
   }
 
-  def close() {
+  def close() :Unit= {
     connection.close()
   }
 }

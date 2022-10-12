@@ -1,6 +1,6 @@
 package RabbitMQ.Producer
 
-import RabbitMQ.{JixelEventSummary, JixelEventReport, JixelEventUpdate}
+import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate}
 
 trait JixelProducer {
   /**
@@ -8,7 +8,14 @@ trait JixelProducer {
    *
    * @param eventJSon
    */
-  def notifyEvent(event: JixelEventSummary): String
+  def notifyEvent(event: JixelEvent): String
+
+  /**
+   * Notify an event to MUSA
+   *
+   * @param eventJSon
+   */
+  def notifyEventSummary(event: JixelEventSummary): String
 
   /**
    * Communicate an update to an incident situation

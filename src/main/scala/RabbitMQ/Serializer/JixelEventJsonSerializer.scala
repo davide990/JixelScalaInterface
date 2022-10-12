@@ -1,10 +1,9 @@
 package RabbitMQ.Serializer
 
-import RabbitMQ.{JixelEventSummary, JixelEventReport, JixelEvent, JixelEventUpdate, Recipient}
+import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate, Recipient}
 import net.liftweb.json.Extraction.decompose
 import net.liftweb.json.JsonAST.{JField, JObject}
-import net.liftweb.json.{DefaultFormats, parse, prettyRender}
-
+import net.liftweb.json.{DefaultFormats, MappingException, parse, prettyRender}
 
 
 /**
@@ -18,8 +17,12 @@ object JixelEventJsonSerializer {
   def fromJson(j: String): Any = {
 
     val ll = parse(j)
-    val parsedSummary = ll.extract[JixelEvent]
-
+    try {
+      val event = ll.extract[JixelEvent]
+      return event
+    } catch {
+      case e: MappingException => println("Message is not a JixelEvent.")
+    }
     ll match {
       /** ************************************* JIXEL EVENT ********************************************************* */
       case JObject(List(JField("id", _), JField("incident_msgtype", _), JField("incident_type", _),
