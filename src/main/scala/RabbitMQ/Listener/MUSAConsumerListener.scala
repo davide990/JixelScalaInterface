@@ -1,6 +1,6 @@
 package RabbitMQ.Listener
 
-import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate, Recipient}
+import RabbitMQ.{JixelEventSummary, JixelEventReport, JixelEventUpdate, Recipient}
 
 /**
  * The methods of this interface are invoked when the respective MUSA events are generated.
@@ -16,7 +16,7 @@ trait MUSAConsumerListener {
    *
    * @param event
    */
-  def onNotifyEvent(event: JixelEvent): Unit
+  def onNotifyEvent(event: JixelEventSummary): Unit
 
   /**
    * This method is invoked when an update to a jixel event is notified to MUSA

@@ -52,26 +52,26 @@ class MUSARabbitMQProducer extends MUSAProducer{
    *
    * @param eventJSon
    */
-  override def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
+  override def notifyEvent(event: JixelEventSummary): String = call(JixelEventJsonSerializer.toJSon(event))
 
-  override def addRecipient(ev: JixelEvent, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
+  override def addRecipient(ev: JixelEventSummary, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
 
-  override def updateUrgencyLevel(ev: JixelEvent, level: String): String =
+  override def updateUrgencyLevel(ev: JixelEventSummary, level: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.UrgencyLevel, level)))
 
-  override def updateEventSeverity(ev: JixelEvent, severity: String): String =
+  override def updateEventSeverity(ev: JixelEventSummary, severity: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventSeverity, severity)))
 
-  override def updateEventTypology(ev: JixelEvent, typology: String): String =
+  override def updateEventTypology(ev: JixelEventSummary, typology: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventTypology, typology)))
 
-  override def updateEventDescription(ev: JixelEvent, description: String): String =
+  override def updateEventDescription(ev: JixelEventSummary, description: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventDescription, description)))
 
-  override def updateCommType(ev: JixelEvent, commType: String): String =
+  override def updateCommType(ev: JixelEventSummary, commType: String): String =
     call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.CommType, commType)))
 
-  private def getUpdateEntity(ev: JixelEvent, updateType: Int, content: String): JixelEventUpdate =
+  private def getUpdateEntity(ev: JixelEventSummary, updateType: Int, content: String): JixelEventUpdate =
     JixelEventUpdate(ev, JixelEventUpdateDetail(updateType, content))
 
   /**

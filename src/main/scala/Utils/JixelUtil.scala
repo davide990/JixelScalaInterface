@@ -2,7 +2,7 @@ package Utils
 
 import JixelAPIInterface.JixelInterface
 import JixelAPIInterface.Login.LoginToken
-import RabbitMQ.{JixelEvent, JixelEventSummary}
+import RabbitMQ.{JixelEventSummary, JixelEvent}
 
 import scala.util.Random
 
@@ -18,7 +18,7 @@ object JixelUtil {
    * @param eventSummary
    * @return
    */
-  def eventFromEventSummary(login: LoginToken, eventSummary: JixelEventSummary): JixelEvent = {
+  def eventFromEventSummary(login: LoginToken, eventSummary: JixelEvent): JixelEventSummary = {
     val connectionResult = JixelInterface.connect(login)
     val jixelUser = JixelInterface.parseToJixelCredential(connectionResult)
     JixelInterface.requestEventDetail(jixelUser.token, eventSummary.id).incident;
@@ -30,7 +30,7 @@ object JixelUtil {
    * @param login
    * @return
    */
-  def getAnyJixelEvent(login: LoginToken): JixelEventSummary = {
+  def getAnyJixelEvent(login: LoginToken): JixelEvent = {
     val connectionResult = JixelInterface.connect(login)
     val jixelUser = JixelInterface.parseToJixelCredential(connectionResult)
     val eventList = JixelInterface.requestEventList(jixelUser.token).incidents;
@@ -46,7 +46,7 @@ object JixelUtil {
    * @param id
    * @return
    */
-  def getJixelEvent(login: LoginToken, id: Int): Option[JixelEvent] = {
+  def getJixelEvent(login: LoginToken, id: Int): Option[JixelEventSummary] = {
     val connectionResult = JixelInterface.connect(login)
     val jixelUser = JixelInterface.parseToJixelCredential(connectionResult)
     try {

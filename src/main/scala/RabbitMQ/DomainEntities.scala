@@ -1,6 +1,6 @@
 package RabbitMQ
 
-import JixelAPIInterface.Alert.{JixelFileAttachmentList, JixelPagination}
+import JixelAPIInterface.Alert.{JixelAlertActor, JixelFileAttachmentList, JixelOrganisation, JixelPagination}
 
 /**
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
@@ -14,7 +14,6 @@ object JixelEventUpdateTypology {
   val EventDescription = 0x3
   val CommType = 0x4
 }
-
 
 /**
  * per jixelEvent devono esserci:
@@ -38,6 +37,7 @@ object JixelEventUpdateTypology {
 
 case class JixelIncidentMsgType(id: Int,
                                 enum_value: String,
+                                _locale: Option[String],
                                 description_name: String,
                                 description_value: String,
                                 description_category: String,
@@ -55,6 +55,7 @@ case class JixelIncidentType(id: Int,
                              category: String,
                              interoperability_incident_type_id: Object,
                              post_emergency: Int,
+                             _locale: Option[String],
                              description_name: String,
                              description_value: String,
                              description_category: String,
@@ -77,6 +78,7 @@ case class JixelIncidentSubType(id: Int,
 
 case class JixelIncidentStatus(id: Int,
                                description: String,
+                               _locale: Option[String],
                                description_name: String,
                                description_value: String,
                                description_category: String,
@@ -84,10 +86,12 @@ case class JixelIncidentStatus(id: Int,
 
 case class JixelUrgencyLevel(id: Int,
                              description: String,
+                             _locale: Option[String],
                              cap_description_value: String)
 
 case class JixelSeverityLevel(id: Int,
                               description: String,
+                              _locale: Option[String],
                               cap_description_value: String)
 
 case class JixelIncidentLocation(id: Int,
@@ -129,10 +133,9 @@ case class JixelEventPaginationDetails(finder: String,
                                        sortDefault: String,
                                        directionDefault: String)
 
-case class JixelEventList(incidents: List[JixelEventSummary], pagination: JixelEventPagination)
+case class JixelEventList(incidents: List[JixelEvent], pagination: JixelEventPagination)
 
-case class JixelEventDetail(incident: JixelEvent)
-
+case class JixelEventDetail(incident: JixelEventSummary)
 
 case class JixelEventControllableObject(id: Int,
                                         created: String,
@@ -156,58 +159,102 @@ case class JixelEventControllableObject(id: Int,
                                         attachment_url_accesses: JixelFileAttachmentList,
                                         creator_organisation: String)
 
-
-case class JixelEvent(id: String,
-                      incident_msgtype: JixelIncidentMsgType,
-                      incident_type: JixelIncidentType,
-                      //incident_subtype: Option[JixelIncidentSubType],
-                      incident_status: JixelIncidentStatus,
-                      incident_urgency: JixelUrgencyLevel,
-                      incident_severity: JixelSeverityLevel,
-                      headline: String,
-                      description: String,
-                      caller_name: String,
-                      caller_phone: String,
-                      instructions: String,
-                      locations: List[JixelIncidentLocation],
-                      controllable_object: JixelEventControllableObject,
-                      recipients: List[JixelRecipient],
-                      voluntary_organisations: List[Int])
-
-case class JixelEventSummary(id: Int,
+case class JixelEventSummary(id: String,
+                             incident_msgtype: JixelIncidentMsgType,
+                             incident_type: JixelIncidentType,
+                             incident_status: JixelIncidentStatus,
+                             incident_urgency: JixelUrgencyLevel,
+                             incident_severity: JixelSeverityLevel,
+                             headline: String,
                              description: String,
-                             casualties: Object,
                              caller_name: String,
                              caller_phone: String,
-                             incident_interface_fire: Boolean,
-                             incident_distance: Object,
-                             incident_msgtype_id: Int,
-                             incident_type_id: Int,
-                             incident_status_id: Int,
-                             incident_id: Object,
-                             headline: String,
-                             date: String,
-                             completable: Boolean,
-                             public: Boolean,
+                             instructions: String,
+                             locations: List[JixelIncidentLocation],
                              controllable_object: JixelEventControllableObject,
-                             incident_status: JixelIncidentStatus,
-                             incident_msgtype: JixelIncidentMsgType,
-                             is_user_recipient: Boolean,
-                             updates: Int,
-                             entity_type: String,
-                             entity_description: String,
-                             instructions: String)
+                             recipients: List[JixelRecipient],
+                             voluntary_organisations: List[Int])
 
-case class JixelEventUpdate(event: JixelEvent, update: JixelEventUpdateDetail)
+case class JixelEvent(id: Integer,
+                      description: String,
+                      casualties: Object,
+                      caller_name: String,
+                      caller_phone: String,
+                      incident_interface_fire: Boolean,
+                      incident_distance: Object,
+                      incident_msgtype_id: Integer,
+                      incident_type_id: Integer,
+                      incident_status_id: Integer,
+                      incident_id: Integer,
+                      headline: String,
+                      date: String,
+                      completable: Boolean,
+                      public: Boolean,
+                      controllable_object: JixelEventControllableObject,
+                      incident_status: JixelIncidentStatus,
+                      incident_msgtype: JixelIncidentMsgType,
+                      _matchingData: Option[JixelSummaryMatchingData],
+                      is_user_recipient: Boolean,
+                      updates: Integer,
+                      entity_type: String,
+                      entity_description: String,
+                      instructions: Object)
+
+case class JixelSummaryMatchingData(ControllableObjects: JixelEventControllableObject,
+                                    ControllableObjectActors: JixelControllableObjectActors,
+                                    Organisations: JixelIncidentOrganisation,
+                                    Actors: JixelIncidentActor)
+
+case class JixelIncidentOrganisation(id: Integer,
+                                     acronym: String,
+                                     address: String,
+                                     district: String,
+                                     cap: String,
+                                     province: String,
+                                     phone: String,
+                                     mobile: String,
+                                     fax: String,
+                                     email: String,
+                                     organisation_type_id: Integer,
+                                     actor_id: Integer,
+                                     incident_creator: Boolean,
+                                     pec: String,
+                                     geotype: String,
+                                     coordinates: String,
+                                     feature_collection: Object,
+                                     deleted: Object,
+                                     photo: String,
+                                     incident_default_tab: Integer,
+                                     loggable_object_id: Integer,
+                                     controllable_object_interface_id: Integer, //!
+                                     allow_badges: Boolean)
+
+case class JixelIncidentActor(id: Integer,
+                              description: String,
+                              actor_type_id: Integer,
+                              interoperability_identifier: Object,
+                              incident_type_group_id: Object,
+                              deleted: Object,
+                              description_with_actor_type: String,
+                              actor_type_description: String)
+
+case class JixelControllableObjectActors(id: Integer,
+                                         controllable_object_id: Integer,
+                                         actor_id: Integer,
+                                         controllable_object_actor_type_id: Integer,
+                                         validation_level_id: Object,
+                                         deleted: Object)
+
+case class JixelEventUpdate(event: JixelEventSummary, update: JixelEventUpdateDetail)
 
 case class JixelEventUpdateDetail(updateType: Int, content: String)
 
 case class JixelEventReportFileAttachments(fileID: String, fileName: String)
 
-case class JixelEventReport(event: JixelEvent, files: List[JixelEventReportFileAttachments])
+case class JixelEventReport(event: JixelEventSummary, files: List[JixelEventReportFileAttachments])
 
 // recipient should be of type JixelAlertActor
-case class Recipient(event: JixelEvent, recipient: String)
+case class Recipient(event: JixelEventSummary, recipient: String)
 
 case class ReadAckRequiredHead(read_ack_required: ReadAckRequired)
 

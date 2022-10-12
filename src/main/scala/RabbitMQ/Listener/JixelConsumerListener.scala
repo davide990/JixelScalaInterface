@@ -1,6 +1,6 @@
 package RabbitMQ.Listener
 
-import RabbitMQ.{JixelEvent, JixelEventUpdate, Recipient}
+import RabbitMQ.{JixelEventSummary, JixelEventUpdate, Recipient}
 
 /**
  * The methods of this interface are invoked when the respective jixel events are generated.
@@ -17,7 +17,7 @@ trait JixelConsumerListener {
    *
    * @param event
    */
-  def onCreateEvent(event: JixelEvent): Unit
+  def onCreateEvent(event: JixelEventSummary): Unit
 
   /**
    * This method is invoked when a new recipient is added to an event.

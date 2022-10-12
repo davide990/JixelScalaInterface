@@ -2,7 +2,7 @@ package RabbitMQ.ConsumerCallback
 
 import RabbitMQ.Listener.MUSAConsumerListener
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventUpdate, Recipient}
+import RabbitMQ.{JixelEventSummary, JixelEventReport, JixelEventUpdate, Recipient}
 import com.rabbitmq.client._
 
 import java.util.concurrent.CountDownLatch
@@ -25,7 +25,7 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
       val parsed = JixelEventJsonSerializer.fromJson(message)
       // invoke the listener
       parsed match {
-        case ev: JixelEvent => {
+        case ev: JixelEventSummary => {
           listener.map(l => l.onNotifyEvent(ev))
           println("[MUSA] received an event from Jixel")
         }
