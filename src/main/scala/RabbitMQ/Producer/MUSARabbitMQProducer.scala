@@ -92,7 +92,11 @@ class MUSARabbitMQProducer extends MUSAProducer {
     //jixel publish to topic using the routing key "jixel.musa2jixel.*"
     channel.basicPublish(defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey, props, jsonMessage.getBytes("UTF-8"))
 
-    println(s"[MUSA] published ${jsonMessage}\n[MUSA]now waiting response...\n")
+    Config.verbose match {
+      case true => println(s"[MUSA] published ${jsonMessage}\n[MUSA]now waiting response...\n")
+      case false => println(s"[MUSA] published\n[MUSA]now waiting response...\n")
+    }
+    //println(s"[MUSA] published ${jsonMessage}\n[MUSA]now waiting response...\n")
 
     // wait for ack message...
     channel.waitForConfirms(defaultConfig.maxWaitForAck).toString

@@ -2,7 +2,7 @@ package RabbitMQ.Producer
 
 import RabbitMQ.Config.defaultConfig
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate}
+import RabbitMQ.{Config, JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate}
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client._
 
@@ -100,7 +100,11 @@ class JixelRabbitMQProducer extends JixelProducer {
     //jixel publish to topic using the routing key "jixel.jixel2musa.*"
     channel.basicPublish(defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey, props, jsonMessage.getBytes("UTF-8"))
 
-    println(s"[JIXEL] published ${jsonMessage}\n[JIXEL]now waiting response...\n")
+    Config.verbose match {
+      case true => println(s"[JIXEL] published ${jsonMessage}\n[JIXEL]now waiting response...\n")
+      case false => println(s"[JIXEL] published\n[JIXEL]now waiting response...\n")
+    }
+    //println(s"[JIXEL] published ${jsonMessage}\n[JIXEL]now waiting response...\n")
 
     // wait for ack message...
     channel.waitForConfirms(defaultConfig.maxWaitForAck).toString

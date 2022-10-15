@@ -46,4 +46,6 @@ object Config {
 
   //val defaultConfig = rabbitMQIESConf
   val defaultConfig = rabbitMQLocalConf
+
+  val verbose = false
 }

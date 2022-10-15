@@ -2,7 +2,7 @@ package RabbitMQ.ConsumerCallback
 
 import RabbitMQ.Listener.MUSAConsumerListener
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{JixelEventSummary, JixelEventReport, JixelEventUpdate, Recipient}
+import RabbitMQ.{Config, JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate, Recipient}
 import com.rabbitmq.client._
 
 import java.util.concurrent.CountDownLatch
@@ -25,9 +25,13 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
       val parsed = JixelEventJsonSerializer.fromJson(message)
       // invoke the listener
       parsed match {
-        case ev: JixelEventSummary => {
+        case ev: JixelEvent => {
           listener.map(l => l.onNotifyEvent(ev))
           println("[MUSA] received an event from Jixel")
+        }
+        case ev: JixelEventSummary => {
+          listener.map(l => l.onNotifyEventSummary(ev))
+          println("[MUSA] received an event summary from Jixel")
         }
         case eu: JixelEventUpdate => {
           listener.map(l => l.onEventUpdate(eu))
@@ -41,7 +45,12 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
           listener.map(l => l.onAddRecipient(r))
           println("[MUSA] added recipient")
         }
-        case _ => throw new Exception(s"[MUSA] Unhandled message: ${parsed}")
+        case _ =>
+        Config.verbose match {
+          case true => throw new Exception(s"[MUSA] Unhandled message: ${parsed}")
+          case _ => throw new Exception(s"[MUSA] Unhandled message:")
+        }
+
       }
     } catch {
       case e: Exception => println(s"[MUSA] ERROR, cannot parse ${message}: ${e.toString}")
@@ -49,10 +58,12 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
       println(Console.GREEN_B + Console.WHITE + "[MUSA] acknowledge to Jixel")
       // ack the message received from jixel.
       ch.basicAck(delivery.getEnvelope.getDeliveryTag, false)
-
       latch.countDown()
       print(Console.RESET)
-      println(s"[MUSA] Consumed message ${message}")
+      Config.verbose match {
+        case true => println(s"[MUSA] Consumed message ${message}")
+        case false => println(s"[MUSA] Consumed message")
+      }
     }
   }
 }

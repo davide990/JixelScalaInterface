@@ -15,14 +15,15 @@ object JixelEventJsonSerializer {
   def toJSon(entity: Any): String = prettyRender(decompose(entity))
 
   def fromJson(j: String): Any = {
-
     val ll = parse(j)
     try {
       val event = ll.extract[JixelEvent]
+      println("---->Message is a JixelEvent.")
       return event
     } catch {
-      case e: MappingException => println("Message is not a JixelEvent.")
+      case e: MappingException => //println("---->Message is not a JixelEvent.")
     }
+
     ll match {
       /** ************************************* JIXEL EVENT ********************************************************* */
       case JObject(List(JField("id", _), JField("incident_msgtype", _), JField("incident_type", _),
@@ -30,17 +31,27 @@ object JixelEventJsonSerializer {
       JField("incident_severity", _), JField("headline", _), JField("description", _),
       JField("caller_name", _), JField("caller_phone", _), JField("instructions", _),
       JField("locations", _), JField("controllable_object", _), JField("recipients", _),
-      JField("voluntary_organisations", _))) => ll.extract[JixelEventSummary]
+      JField("voluntary_organisations", _))) =>
+        println("---->Message is a JixelEventSummary.")
+        ll.extract[JixelEventSummary]
 
       /** ************************************* JIXEL EVENT UPDATE ************************************************** */
-      case JObject(List(JField("event", _), JField("update", _))) => ll.extract[JixelEventUpdate]
+      case JObject(List(JField("event", _), JField("update", _))) =>
+        println("---->Message is a JixelEventUpdate.")
+        ll.extract[JixelEventUpdate]
 
       /** ************************************* JIXEL EVENT REPORT ************************************************** */
-      case JObject(List(JField("event", _), JField("files", _))) => ll.extract[JixelEventReport]
+      case JObject(List(JField("event", _), JField("files", _))) =>
+        println("---->Message is a JixelEventReport.")
+        ll.extract[JixelEventReport]
 
       /** ************************************* JIXEL RECIPIENT ***************************************************** */
-      case JObject(List(JField("event", _), JField("recipient", _))) => ll.extract[Recipient]
+      case JObject(List(JField("event", _), JField("recipient", _))) =>
+        println("---->Message is a Recipient.")
+        ll.extract[Recipient]
+
       case _ => throw new Exception("Not parsable")
     }
+
   }
 }

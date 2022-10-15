@@ -2,7 +2,7 @@ package RabbitMQ.ConsumerCallback
 
 import RabbitMQ.Listener.{JixelConsumerListener, MUSAConsumerListener}
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{JixelEventSummary, JixelEventUpdate, Recipient}
+import RabbitMQ.{Config, JixelEvent, JixelEventSummary, JixelEventUpdate, Recipient}
 import com.rabbitmq.client._
 
 import java.util.concurrent.CountDownLatch
@@ -23,9 +23,13 @@ class JixelConsumerCallback(val ch: Channel, val latch: CountDownLatch, val list
       // handle the parsed message
       val parsed = JixelEventJsonSerializer.fromJson(message)
       parsed match {
-        case ev: JixelEventSummary => {
+        case ev: JixelEvent => {
           listener.map(l => l.onCreateEvent(ev))
           println("[JIXEL] received an event from MUSA")
+        }
+        case ev: JixelEventSummary => {
+          listener.map(l => l.onCreateEventSummary(ev))
+          println("[JIXEL] received an event summary from MUSA")
         }
         case r: Recipient => {
           listener.map(l => l.onAddRecipient(r))
@@ -35,6 +39,7 @@ class JixelConsumerCallback(val ch: Channel, val latch: CountDownLatch, val list
           listener.map(l => l.onEventUpdate(evUpdate))
           println(s"[JIXEL] received an updateEvent (code #${evUpdate.update.updateType}) request from MUSA")
         }
+
         case _ => throw new Exception("unhandled message")
       }
     } catch {
@@ -46,7 +51,11 @@ class JixelConsumerCallback(val ch: Channel, val latch: CountDownLatch, val list
 
       latch.countDown()
       print(Console.RESET)
-      println(s"[JIXEL] Consumed message ${message}")
+      Config.verbose match {
+        case true=> println(s"[JIXEL] Consumed message ${message}")
+        case false=> println(s"[JIXEL] Consumed message")
+      }
+
     }
   }
 }
