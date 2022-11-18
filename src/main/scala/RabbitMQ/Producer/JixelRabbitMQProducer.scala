@@ -110,7 +110,7 @@ class JixelRabbitMQProducer extends JixelProducer {
     channel.waitForConfirms(defaultConfig.maxWaitForAck).toString
   }
 
-  def close() :Unit= {
+  def close(): Unit = {
     connection.close()
   }
 }

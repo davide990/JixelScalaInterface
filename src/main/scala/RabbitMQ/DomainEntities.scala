@@ -1,6 +1,7 @@
 package RabbitMQ
 
 import JixelAPIInterface.Alert.{JixelAlertActor, JixelFileAttachmentList, JixelOrganisation, JixelPagination}
+import net.liftweb.json.JInt
 
 /**
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
@@ -35,39 +36,43 @@ object JixelEventUpdateTypology {
  * - voluntary_organisations = array di id di organizzazioni di volontariato
  */
 
+
 case class JixelIncidentMsgType(id: Int,
                                 enum_value: String,
                                 _locale: Option[String],
                                 description_name: String,
                                 description_value: String,
                                 description_category: String,
-                                additional_parameters: List[String],
-                                cap_description_value: String)
+                                additional_parameters: List[Object],
+                                cap_description_value: Option[String])
 
 case class JixelIncidentType(id: Int,
                              description: String,
-                             color: Object,
-                             icon: Object,
+                             color: Option[String],
+                             icon: Option[String],
                              app_enabled: Boolean,
-                             order: Object,
-                             deleted: Object,
+                             order: Option[Int],
+                             deleted: Option[String],
                              default_value: Boolean,
                              category: String,
-                             interoperability_incident_type_id: Object,
+                             interoperability_incident_type_id: Option[Int],
                              post_emergency: Int,
                              _locale: Option[String],
                              description_name: String,
                              description_value: String,
                              description_category: String,
-                             additional_parameters: List[String],
+                             additional_parameters: List[Object],
                              subtypes: String,
-                             cap_type_description: String)
+                             cap_type_description: Option[String])
+
+case class JixelEventIncidentSubType(id: Int,
+                                     description: String)
 
 case class JixelIncidentSubType(id: Int,
                                 incident_type_id: Int,
                                 description: String,
-                                color: Object,
-                                icon: String,
+                                color: Option[String], //Object
+                                icon: Option[String],
                                 app_enabled: Boolean,
                                 deleted: Object,
                                 default_value: Int,
@@ -82,7 +87,7 @@ case class JixelIncidentStatus(id: Int,
                                description_name: String,
                                description_value: String,
                                description_category: String,
-                               additional_parameters: List[String])
+                               additional_parameters: List[Object])
 
 case class JixelUrgencyLevel(id: Int,
                              description: String,
@@ -101,7 +106,7 @@ case class JixelIncidentLocation(id: Int,
                                  is_strategic_positions: Object,
                                  code: Object,
                                  controllable_object_id: Int,
-                                 feature_collection: String,
+                                 feature_collection: Option[String],
                                  road: String,
                                  town: String,
                                  county: String,
@@ -144,14 +149,14 @@ case class JixelEventControllableObject(id: Int,
                                         controllable_object_type_id: Int,
                                         last_activity_entry_id: Int,
                                         check_code: String,
-                                        emergency_scenario_id: Object,
+                                        emergency_scenario_id: Option[Int],
                                         emergency_scenario_activity: Int,
                                         create_user_id: Int,
                                         edit_user_id: Int,
                                         edit_organisation_id: Int,
-                                        deleted: Object,
+                                        deleted: Option[String],
                                         locations: List[JixelIncidentLocation],
-                                        additional_parameter_value: List[String],
+                                        additional_parameter_value: List[Object],
                                         creator_with_organisation: String,
                                         additional_parameters: List[String],
                                         additional_parameters_for_list: List[String],
@@ -175,30 +180,43 @@ case class JixelEventSummary(id: String,
                              recipients: List[JixelRecipient],
                              voluntary_organisations: List[Int])
 
-case class JixelEvent(id: Integer,
+/*"id": INT,
+    "description": STRING,
+    "casualties": null/STRING,
+    "caller_name": null/STRING,
+    "caller_phone": null/STRING,
+    "incident_interface_fire": BOOL,
+    "incident_distance": null/STRING,
+    "incident_id": null/INT,
+    "headline": STRING,
+    "date": STRING,
+    "completable": BOOL,
+    "public": BOOL,,*/
+case class JixelEvent(id: Int,
                       description: String,
-                      casualties: Object,
-                      caller_name: String,
-                      caller_phone: String,
+                      casualties: Option[String],
+                      caller_name: Option[String],
+                      caller_phone: Option[String],
                       incident_interface_fire: Boolean,
-                      incident_distance: Object,
-                      incident_msgtype_id: Integer,
-                      incident_type_id: Integer,
-                      incident_status_id: Integer,
-                      incident_id: Integer,
+                      incident_distance: Option[String],
+                      incident_id: Option[Int],
                       headline: String,
                       date: String,
                       completable: Boolean,
                       public: Boolean,
-                      controllable_object: JixelEventControllableObject,
+                      incident_subtype: JixelEventIncidentSubType,
+                      incident_severity: Option[JixelSeverityLevel], //NEW: OPTION
+                      incident_urgency: Option[JixelUrgencyLevel], //NEW: OPTION
                       incident_status: JixelIncidentStatus,
+                      incident_type: JixelIncidentType,
                       incident_msgtype: JixelIncidentMsgType,
-                      _matchingData: Option[JixelSummaryMatchingData],
-                      is_user_recipient: Boolean,
-                      updates: Integer,
+                      controllable_object: JixelEventControllableObject,
+                      weblink: String,
+                      recipients: List[JixelEventRecipient],
+                      updates: Int,
                       entity_type: String,
                       entity_description: String,
-                      instructions: Object)
+                      instructions: Option[String])
 
 case class JixelSummaryMatchingData(ControllableObjects: JixelEventControllableObject,
                                     ControllableObjectActors: JixelControllableObjectActors,
@@ -253,9 +271,61 @@ case class JixelEventReportFileAttachments(fileID: String, fileName: String)
 
 case class JixelEventReport(event: JixelEvent, files: List[JixelEventReportFileAttachments])
 
-// recipient should be of type JixelAlertActor
 case class Recipient(event: JixelEvent, recipient: String)
+
+case class JixelEventRecipient(group_name: String,
+                               group_items: List[JixelEventRecipientGroupItem])
+
+case class JixelEventRecipientGroupItem(id: Int, text: String)
 
 case class ReadAckRequiredHead(read_ack_required: ReadAckRequired)
 
 case class ReadAckRequired(co_id: Int, check_code: String)
+
+case class JixelMsgAddRecipient(command: String, data: JixelMsgDataAddRecipient)
+
+case class JixelMsgDataAddRecipient(incident_id: Int, actor_ids: List[Int])
+
+case class JixelMsgUrgencyLevel(command: String, data: JixelMsgDataUrgencyLevel)
+
+case class JixelMsgDataUrgencyLevel(incident_id: Int, incident_urgency_id: Int)
+
+case class JixelMsgEventSeverity(command: String, data: JixelMsgDataEventSeverity)
+
+case class JixelMsgDataEventSeverity(incident_id: Int, incident_severity_id: Int)
+
+case class JixelMsgEventTypology(command: String, data: JixelMsgDataEventTypology)
+
+case class JixelMsgDataEventTypology(incident_id: Int, incident_type_id: Int)
+
+case class JixelMsgEventDescription(command: String, data: JixelMsgDataEventDescription)
+
+case class JixelMsgDataEventDescription(incident_id: Int, description: String)
+
+case class JixelMsgUpdateCommType(command: String, data: JixelMsgDataCommType)
+
+case class JixelMsgDataCommType(incident_id: Int, incident_msgtype_id: Int)
+
+case class JixelMsgUpdateCommTypeError(command: String, data: JixelMsgUpdateCommTypeData, result_code: Int, error_message: JixelMsgUpdateCommTypeErrMessage)
+
+case class JixelMsgUpdateCommTypeData(incident_id: Int, incident_msgtype_id: Int)
+
+case class JixelMsgUpdateCommTypeErrMessage(incident_msgtype_id: JixelMsgUpdateCommTypeErrMessageID)
+
+case class JixelMsgUpdateCommTypeErrMessageID(_existsIn: String)
+
+//-------
+
+case class JixelAckAddRecipient(result_code: Int, original_message: JixelMsgAddRecipient)
+
+case class JixelAckUrgencyLevel(result_code: Int, original_message: JixelMsgUrgencyLevel)
+
+case class JixelAckEventSeverity(result_code: Int, original_message: JixelMsgEventSeverity)
+
+case class JixelAckEventTypology(result_code: Int, original_message: JixelMsgEventTypology)
+
+case class JixelAckEventDescription(result_code: Int, original_message: JixelMsgEventDescription)
+
+case class JixelAckUpdateCommType(result_code: Int, original_message: JixelMsgUpdateCommType)
+
+case class JixelAckUpdateCommTypeError(result_code: Int, original_message: JixelMsgUpdateCommTypeError)

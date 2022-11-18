@@ -2,7 +2,7 @@ package RabbitMQ.ConsumerCallback
 
 import RabbitMQ.Listener.MUSAConsumerListener
 import RabbitMQ.Serializer.JixelEventJsonSerializer
-import RabbitMQ.{Config, JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate, Recipient}
+import RabbitMQ._
 import com.rabbitmq.client._
 
 import java.util.concurrent.CountDownLatch
@@ -45,6 +45,41 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
           listener.map(l => l.onAddRecipient(r))
           println("[MUSA] added recipient")
         }
+
+        //------------------------------
+        // ACK FROM JIXEL
+        //------------------------------
+        case r: JixelAckAddRecipient => {
+          listener.map(l => l.onJixelAckAddRecipient(r))
+          println("[MUSA] received from Jixel")
+        }
+        case r: JixelAckUrgencyLevel => {
+          listener.map(l => l.onJixelAckUrgencyLevel(r))
+          println("[MUSA] received  from Jixel")
+        }
+        case r: JixelAckEventSeverity => {
+          listener.map(l => l.onJixelAckEventSeverity(r))
+          println("[MUSA] received  from Jixel")
+        }
+        case r: JixelAckEventTypology => {
+          listener.map(l => l.onJixelAckEventTypology(r))
+          println("[MUSA] received  from Jixel")
+        }
+        case r: JixelAckEventDescription => {
+          listener.map(l => l.onJixelAckEventDescription(r))
+          println("[MUSA] received from Jixel")
+        }
+        case r: JixelAckUpdateCommType => {
+          listener.map(l => l.onJixelAckUpdateCommType(r))
+          println("[MUSA] received from Jixel")
+        }
+        case r: JixelAckUpdateCommTypeError => {
+          listener.map(l => l.onJixelAckUpdateCommTypeError(r))
+          println("[MUSA] received from Jixel")
+        }
+
+
+
         case _ =>
         Config.verbose match {
           case true => throw new Exception(s"[MUSA] Unhandled message: ${parsed}")

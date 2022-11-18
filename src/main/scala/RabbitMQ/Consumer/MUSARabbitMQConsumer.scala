@@ -2,7 +2,7 @@ package RabbitMQ.Consumer
 
 import RabbitMQ.Config.defaultConfig
 import RabbitMQ.ConsumerCallback.MUSAConsumerCallback
-import RabbitMQ.Listener.{JixelConsumerListener, MUSAConsumerListener}
+import RabbitMQ.Listener.MUSAConsumerListener
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 
 import java.util.concurrent.CountDownLatch

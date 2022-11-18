@@ -52,7 +52,7 @@ class MUSARabbitMQProducer extends MUSAProducer {
    *
    * @param eventJSon
    */
-  override def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
+  /*override def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
 
   override def addRecipient(ev: JixelEvent, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
 
@@ -73,6 +73,7 @@ class MUSARabbitMQProducer extends MUSAProducer {
 
   private def getUpdateEntity(ev: JixelEvent, updateType: Int, content: String): JixelEventUpdate =
     JixelEventUpdate(ev, JixelEventUpdateDetail(updateType, content))
+*/
 
   /**
    * Sends a message (in Json form) to MUSA
@@ -106,4 +107,33 @@ class MUSARabbitMQProducer extends MUSAProducer {
     connection.close()
   }
 
+  override def addRecipient(ev: JixelEvent, actors_id: List[Int]): String = {
+    val msg = JixelMsgAddRecipient("addRecipient", JixelMsgDataAddRecipient(ev.id, actors_id))
+    call(JixelEventJsonSerializer.toJSon(msg))
+  }
+
+  override def updateUrgencyLevel(ev: JixelEvent, incident_urgency_id: Int): String = {
+    val msg = JixelMsgUrgencyLevel("updateUrgencyLevel", JixelMsgDataUrgencyLevel(ev.id, incident_urgency_id))
+    call(JixelEventJsonSerializer.toJSon(msg))
+  }
+
+  override def updateEventSeverity(ev: JixelEvent, incident_severity_id: Int): String = {
+    val msg = JixelMsgEventSeverity("updateEventSeverity", JixelMsgDataEventSeverity(ev.id, incident_severity_id))
+    call(JixelEventJsonSerializer.toJSon(msg))
+  }
+
+  override def updateEventTypology(ev: JixelEvent, incident_type_id: Int): String = {
+    val msg = JixelMsgEventTypology("updateEventTypology", JixelMsgDataEventTypology(ev.id, incident_type_id))
+    call(JixelEventJsonSerializer.toJSon(msg))
+  }
+
+  override def updateEventDescription(ev: JixelEvent, description: String): String = {
+    val msg = JixelMsgEventDescription("updateEventDescription", JixelMsgDataEventDescription(ev.id, description))
+    call(JixelEventJsonSerializer.toJSon(msg))
+  }
+
+  override def updateCommType(ev: JixelEvent, incident_msgtype_id: Int): String = {
+    val msg = JixelMsgUpdateCommType("updateCommType", JixelMsgDataCommType(ev.id, incident_msgtype_id))
+    call(JixelEventJsonSerializer.toJSon(msg))
+  }
 }

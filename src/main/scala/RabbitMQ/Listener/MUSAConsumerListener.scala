@@ -1,6 +1,6 @@
 package RabbitMQ.Listener
 
-import RabbitMQ.{JixelEvent, JixelEventReport, JixelEventSummary, JixelEventUpdate, Recipient}
+import RabbitMQ._
 
 /**
  * The methods of this interface are invoked when the respective MUSA events are generated.
@@ -45,4 +45,19 @@ trait MUSAConsumerListener {
    * @param r
    */
   def onAddRecipient(r: Recipient): Unit
+
+  def onJixelAckAddRecipient(msg: JixelAckAddRecipient): Unit
+
+  def onJixelAckUrgencyLevel(msg: JixelAckUrgencyLevel): Unit
+
+  def onJixelAckEventSeverity(msg: JixelAckEventSeverity): Unit
+
+  def onJixelAckEventTypology(msg: JixelAckEventTypology): Unit
+
+  def onJixelAckEventDescription(msg: JixelAckEventDescription): Unit
+
+  def onJixelAckUpdateCommType(msg: JixelAckUpdateCommType): Unit
+
+  def onJixelAckUpdateCommTypeError(msg: JixelAckUpdateCommTypeError): Unit
+
 }
