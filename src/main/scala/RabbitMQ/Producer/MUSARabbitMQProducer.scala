@@ -1,10 +1,12 @@
 package RabbitMQ.Producer
 
 import RabbitMQ.Config.defaultConfig
+import RabbitMQ.Consumer.MUSARabbitMQConsumer
 import RabbitMQ.Serializer.JixelEventJsonSerializer
 import RabbitMQ._
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
+import org.slf4j.LoggerFactory
 
 import java.util.UUID
 
@@ -21,6 +23,8 @@ class MUSARabbitMQProducer extends MUSAProducer {
 
   val connection: Connection = factory.newConnection()
   val channel: Channel = connection.createChannel()
+
+  private val logger = LoggerFactory.getLogger(classOf[MUSARabbitMQProducer])
 
   //This setting imposes a limit on the amount of data the server will deliver to consumers before requiring
   // acknowledgements. In the example above, the server will only deliver 1 message and wait for the ack before
@@ -48,34 +52,6 @@ class MUSARabbitMQProducer extends MUSAProducer {
   channel.queueBind(defaultConfig.musa2jixelQueue, defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey)
 
   /**
-   * Notify an event to Jixel
-   *
-   * @param eventJSon
-   */
-  /*override def notifyEvent(event: JixelEvent): String = call(JixelEventJsonSerializer.toJSon(event))
-
-  override def addRecipient(ev: JixelEvent, recipient: String): String = call(JixelEventJsonSerializer.toJSon(Recipient(ev, recipient)))
-
-  override def updateUrgencyLevel(ev: JixelEvent, level: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.UrgencyLevel, level)))
-
-  override def updateEventSeverity(ev: JixelEvent, severity: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventSeverity, severity)))
-
-  override def updateEventTypology(ev: JixelEvent, typology: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventTypology, typology)))
-
-  override def updateEventDescription(ev: JixelEvent, description: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.EventDescription, description)))
-
-  override def updateCommType(ev: JixelEvent, commType: String): String =
-    call(JixelEventJsonSerializer.toJSon(getUpdateEntity(ev, JixelEventUpdateTypology.CommType, commType)))
-
-  private def getUpdateEntity(ev: JixelEvent, updateType: Int, content: String): JixelEventUpdate =
-    JixelEventUpdate(ev, JixelEventUpdateDetail(updateType, content))
-*/
-
-  /**
    * Sends a message (in Json form) to MUSA
    *
    * @param jsonMessage
@@ -93,10 +69,9 @@ class MUSARabbitMQProducer extends MUSAProducer {
     //jixel publish to topic using the routing key "jixel.musa2jixel.*"
     channel.basicPublish(defaultConfig.exchangeName, defaultConfig.musa2jixelRoutingKey, props, jsonMessage.getBytes("UTF-8"))
 
-    Config.verbose match {
-      case true => println(s"[MUSA] published ${jsonMessage}\n[MUSA]now waiting response...\n")
-      case false => println(s"[MUSA] published\n[MUSA]now waiting response...\n")
-    }
+    logger.info(Console.BLUE_B + Console.YELLOW + s"[MUSA] Published message to Jixel" + Console.RESET)
+    logger.info(Console.BLUE_B + Console.YELLOW + s"[MUSA] Now waiting for ACK from JIXEL...\n" + Console.RESET)
+
     //println(s"[MUSA] published ${jsonMessage}\n[MUSA]now waiting response...\n")
 
     // wait for ack message...

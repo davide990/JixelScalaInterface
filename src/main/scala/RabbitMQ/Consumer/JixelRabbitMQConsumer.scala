@@ -4,6 +4,7 @@ import RabbitMQ.Config.defaultConfig
 import RabbitMQ.ConsumerCallback.JixelConsumerCallback
 import RabbitMQ.Listener.JixelConsumerListener
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
+import org.slf4j.LoggerFactory
 
 import java.util.concurrent.CountDownLatch
 
@@ -40,6 +41,9 @@ import java.util.concurrent.CountDownLatch
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
  */
 class JixelRabbitMQConsumer {
+
+  private val logger = LoggerFactory.getLogger(classOf[JixelRabbitMQConsumer])
+
   private var connection: Connection = null
   private var channel: Channel = null
 
@@ -60,14 +64,11 @@ class JixelRabbitMQConsumer {
       // delivering the next one. Thus, the server will always prefer to send messages to free receivers, making the
       // workload better distributed.
       channel.basicQos(1)
-      //channel.confirmSelect
 
       channel.exchangeDeclare(defaultConfig.exchangeName, "topic")
 
       //musa2jixel queue used in jixel
       channel.queueDeclare(defaultConfig.musa2jixelQueue, true, false, false, null)
-
-      //channel.queuePurge(defaultConfig.musa2jixelQueue)
 
       // binding coda<>exchange. l'exchange MUSA smistera i messaggi nella coda per la comunicazione verso jixel
       // Musa subscribes to this queue to receive messages from jixel
@@ -75,7 +76,7 @@ class JixelRabbitMQConsumer {
       channel.queueBind(defaultConfig.jixel2musaQueue, defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey)
     }
     catch {
-      case x: Exception => println("Unable to run consumer: " + x)
+      case x: Exception => logger.info(Console.RED_B + Console.WHITE + " [Jixel] Unable to run consumer task; error: " + x + Console.RESET)
     }
   }
 
@@ -86,7 +87,7 @@ class JixelRabbitMQConsumer {
       val serverCallback = new JixelConsumerCallback(channel, latch, listener)
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.musa2jixelQueue, false, serverCallback, (_: String) => {})
-      println(Console.BLUE_B + Console.YELLOW + " [Jixel] Awaiting requests from MUSA..." + Console.RESET)
+      logger.info(Console.BLUE_B + Console.YELLOW + " [Jixel] Awaiting messages from MUSA..." + Console.RESET)
       latch.await()
     } catch {
       case e: Exception => e.printStackTrace()

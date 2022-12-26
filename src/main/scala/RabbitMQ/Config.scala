@@ -44,8 +44,8 @@ object Config {
     "jixel.musa_to_jixel.*",
     3000)
 
-  val defaultConfig = rabbitMQIESConf
-  //val defaultConfig = rabbitMQLocalConf
+  //val defaultConfig = rabbitMQIESConf
+  val defaultConfig = rabbitMQLocalConf
 
   val verbose = false
 }

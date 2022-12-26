@@ -1,42 +1,10 @@
 package RabbitMQ
 
-import JixelAPIInterface.Alert.{JixelAlertActor, JixelFileAttachmentList, JixelOrganisation, JixelPagination}
-import net.liftweb.json.JInt
+import JixelAPIInterface.Alert.JixelFileAttachmentList
 
 /**
  * @author Davide A. Guastella (davide.guastella@icar.cnr.it)
  */
-
-object JixelEventUpdateTypology {
-  // NOTE: Using val and not case object because these last cannot be serialized through lift unless custom serializer.
-  val UrgencyLevel = 0x0
-  val EventSeverity = 0x1
-  val EventTypology = 0x2
-  val EventDescription = 0x3
-  val CommType = 0x4
-}
-
-/**
- * per jixelEvent devono esserci:
- * - communication type (enum fissa, 4 val)
- * - tipo di evento (eventType sarebbe una enum, ha dei valori di base ma puo essere arricchita con nuove tipologie)
- * - sottotipologia Optional<tipologia?>
- * esempio: se il tipo è "fire" allora la sottotipologia potrebbe essere "forest", o "building". E' un supporto, non obbiglatorio
- *
- * - stato: 4 stati fissi (reported, pending (prima di procedere, controllare), under_control (gia fatto dispatching delle risorse), managed (apposto))
- * - livello urgenza (OPZIONALE): (past, immediate, future) > interessante future, da vedere bene....
- * - liv. criticità (OPZIONALE): esprime quattro gradi di criticità (minor, moderate, severe, extreme)
- * - oggetto: free-text, ma obbligatorio, fatto dall'operatore
- * - descrizione: free-text, ma obbligatorio, fatto dall'operatore
- * - caller (optional): chi ha creato e/o iniziato l'evento
- * - instructions (opzionale): istruzioni "generiche" specifiche per l'organizzazione che riceve il messaggio. non sono strutture, testo libero
- * - location (latitudine, longitudine) in WGS84
- * - attachments: una lista di coppie (hash, nomefile). Tirarlo da jixel è facile, mandarlo a jixel...DA VEDERE
- * - destinatari: array di [actor_id, operations] dove operations è una enum di 13 valori
- * - voluntary_organisations = array di id di organizzazioni di volontariato
- */
-
-
 case class JixelIncidentMsgType(id: Int,
                                 enum_value: String,
                                 _locale: Option[String],
@@ -180,18 +148,6 @@ case class JixelEventSummary(id: String,
                              recipients: List[JixelRecipient],
                              voluntary_organisations: List[Int])
 
-/*"id": INT,
-    "description": STRING,
-    "casualties": null/STRING,
-    "caller_name": null/STRING,
-    "caller_phone": null/STRING,
-    "incident_interface_fire": BOOL,
-    "incident_distance": null/STRING,
-    "incident_id": null/INT,
-    "headline": STRING,
-    "date": STRING,
-    "completable": BOOL,
-    "public": BOOL,,*/
 case class JixelEvent(id: Int,
                       description: String,
                       casualties: Option[String],
@@ -218,12 +174,12 @@ case class JixelEvent(id: Int,
                       entity_description: String,
                       instructions: Option[String])
 
-case class JixelSummaryMatchingData(ControllableObjects: JixelEventControllableObject,
+/*case class JixelSummaryMatchingData(ControllableObjects: JixelEventControllableObject,
                                     ControllableObjectActors: JixelControllableObjectActors,
                                     Organisations: JixelIncidentOrganisation,
-                                    Actors: JixelIncidentActor)
+                                    Actors: JixelIncidentActor)*/
 
-case class JixelIncidentOrganisation(id: Integer,
+/*case class JixelIncidentOrganisation(id: Integer,
                                      acronym: String,
                                      address: String,
                                      district: String,
@@ -261,7 +217,7 @@ case class JixelControllableObjectActors(id: Integer,
                                          actor_id: Integer,
                                          controllable_object_actor_type_id: Integer,
                                          validation_level_id: Object,
-                                         deleted: Object)
+                                         deleted: Object)*/
 
 case class JixelEventUpdate(event: JixelEvent, update: JixelEventUpdateDetail)
 
@@ -281,6 +237,10 @@ case class JixelEventRecipientGroupItem(id: Int, text: String)
 case class ReadAckRequiredHead(read_ack_required: ReadAckRequired)
 
 case class ReadAckRequired(co_id: Int, check_code: String)
+
+/*
+ * MESSAGES SENT BY MUSA TO JIXEL
+ */
 
 case class JixelMsgAddRecipient(command: String, data: JixelMsgDataAddRecipient)
 
@@ -314,7 +274,9 @@ case class JixelMsgUpdateCommTypeErrMessage(incident_msgtype_id: JixelMsgUpdateC
 
 case class JixelMsgUpdateCommTypeErrMessageID(_existsIn: String)
 
-//-------
+/*
+ * MESSAGES SENT BY JIXEL TO MUSA
+ */
 
 case class JixelAckAddRecipient(result_code: Int, original_message: JixelMsgAddRecipient)
 

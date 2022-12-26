@@ -4,6 +4,7 @@ import RabbitMQ.Config.defaultConfig
 import RabbitMQ.ConsumerCallback.MUSAConsumerCallback
 import RabbitMQ.Listener.MUSAConsumerListener
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
+import org.slf4j.LoggerFactory
 
 import java.util.concurrent.CountDownLatch
 
@@ -16,6 +17,8 @@ class MUSARabbitMQConsumer {
   var connection: Connection = null
   var channel: Channel = null
   val factory = new ConnectionFactory()
+
+  private val logger = LoggerFactory.getLogger(classOf[MUSARabbitMQConsumer])
 
   def init(): Unit = {
     try {
@@ -49,7 +52,7 @@ class MUSARabbitMQConsumer {
       channel.queueBind(defaultConfig.jixel2musaQueue, defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey)
     }
     catch {
-      case x: Exception => println("Unable to run consumer: " + x)
+      case x: Exception => logger.info(Console.RED_B + Console.WHITE + " [MUSA] Unable to run consumer task; error: " + x + Console.RESET)
     }
   }
 
@@ -60,7 +63,7 @@ class MUSARabbitMQConsumer {
       val serverCallback = new MUSAConsumerCallback(channel, latch, listener)
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.jixel2musaQueue, false, serverCallback, (_: String) => {})
-      println(Console.BLUE_B + Console.YELLOW + " [MUSA] Awaiting messages from Jixel..." + Console.RESET)
+      logger.info(Console.BLUE_B + Console.YELLOW + " [MUSA] Awaiting messages from JIXEL..." + Console.RESET)
       latch.await()
     } catch {
       case e: Exception => e.printStackTrace()
