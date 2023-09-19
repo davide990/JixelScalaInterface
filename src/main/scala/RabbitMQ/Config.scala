@@ -23,7 +23,7 @@ object Config {
     "localhost",
     5672,
     "/",
-    "MUSAJIXEL",
+    "",//"MUSAJIXEL",
     "jixel2musa",
     "musa2jixel",
     "jixel.jixel_to_musa.*",
@@ -37,7 +37,7 @@ object Config {
     "192.168.32.1",
     5672,
     "musa",
-    "MUSAJIXEL",
+    "",//"MUSAJIXEL",
     "jixel2musa",
     "musa2jixel",
     "jixel.jixel_to_musa.*",
@@ -47,5 +47,5 @@ object Config {
   //val defaultConfig = rabbitMQIESConf
   val defaultConfig = rabbitMQLocalConf
 
-  val verbose = false
+  val verbose = true
 }
