@@ -39,7 +39,7 @@ class MUSARabbitMQProducer extends MUSAProducer {
   //Declare a new exchange. Topic exchanges route messages to queues based on wildcard matches between the routing key
   // and the routing pattern, which is specified by the queue binding. Messages are routed to one or many queues based
   // on a matching between a message routing key and this pattern.
-  channel.exchangeDeclare(defaultConfig.exchangeName, "topic")
+  channel.exchangeDeclare(defaultConfig.exchangeName, "")
 
   // bind the exchange to the queue with their respective routing key
   // The routing key is a message attribute the exchange looks at when deciding how to route the message to queues
