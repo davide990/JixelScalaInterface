@@ -65,7 +65,7 @@ class JixelRabbitMQConsumer {
       // workload better distributed.
       channel.basicQos(1)
 
-      channel.exchangeDeclare(defaultConfig.exchangeName, "topic")
+      channel.exchangeDeclare(defaultConfig.exchangeName, "")
 
       //musa2jixel queue used in jixel
       channel.queueDeclare(defaultConfig.musa2jixelQueue, true, false, false, null)
@@ -76,7 +76,7 @@ class JixelRabbitMQConsumer {
       channel.queueBind(defaultConfig.jixel2musaQueue, defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey)
     }
     catch {
-      case x: Exception => logger.info(Console.RED_B + Console.WHITE + " [Jixel] Unable to run consumer task; error: " + x + Console.RESET)
+      case x: Exception => logger.info(" [Jixel] Unable to run consumer task; error: " + x)
     }
   }
 
@@ -87,7 +87,7 @@ class JixelRabbitMQConsumer {
       val serverCallback = new JixelConsumerCallback(channel, latch, listener)
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.musa2jixelQueue, false, serverCallback, (_: String) => {})
-      logger.info(Console.BLUE_B + Console.YELLOW + " [Jixel] Awaiting messages from MUSA..." + Console.RESET)
+      logger.info(" [Jixel] Awaiting messages from MUSA...")
       latch.await()
     } catch {
       case e: Exception => e.printStackTrace()

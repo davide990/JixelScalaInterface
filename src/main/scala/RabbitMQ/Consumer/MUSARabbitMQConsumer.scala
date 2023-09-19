@@ -39,7 +39,7 @@ class MUSARabbitMQConsumer {
       channel.basicQos(1)
       //channel.confirmSelect
 
-      channel.exchangeDeclare(defaultConfig.exchangeName, "topic")
+      channel.exchangeDeclare(defaultConfig.exchangeName, "")
 
       //jixel2musa in musa
       channel.queueDeclare(defaultConfig.jixel2musaQueue, true, false, false, null)
@@ -52,7 +52,7 @@ class MUSARabbitMQConsumer {
       channel.queueBind(defaultConfig.jixel2musaQueue, defaultConfig.exchangeName, defaultConfig.jixel2musaRoutingKey)
     }
     catch {
-      case x: Exception => logger.info(Console.RED_B + Console.WHITE + " [MUSA] Unable to run consumer task; error: " + x + Console.RESET)
+      case x: Exception => logger.info(" [MUSA] Unable to run consumer task; error: " + x)
     }
   }
 
@@ -63,7 +63,7 @@ class MUSARabbitMQConsumer {
       val serverCallback = new MUSAConsumerCallback(channel, latch, listener)
       // if basicAck is used in callback, autoAck should be set to false
       channel.basicConsume(defaultConfig.jixel2musaQueue, false, serverCallback, (_: String) => {})
-      logger.info(Console.BLUE_B + Console.YELLOW + " [MUSA] Awaiting messages from JIXEL..." + Console.RESET)
+      logger.info(" [MUSA] Awaiting messages from JIXEL...")
       latch.await()
     } catch {
       case e: Exception => e.printStackTrace()

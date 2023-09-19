@@ -54,43 +54,43 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
         //------------------------------
         case r: JixelAckAddRecipient => {
           listener.foreach(l => l.onJixelAckAddRecipient(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [add recipient]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [add recipient]")
         }
         case r: JixelAckUrgencyLevel => {
           listener.foreach(l => l.onJixelAckUrgencyLevel(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [urgency level]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [urgency level]")
         }
         case r: JixelAckEventSeverity => {
           listener.foreach(l => l.onJixelAckEventSeverity(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [severity level]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [severity level]")
         }
         case r: JixelAckEventTypology => {
           listener.foreach(l => l.onJixelAckEventTypology(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [event typology]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [event typology]")
         }
         case r: JixelAckEventDescription => {
           listener.foreach(l => l.onJixelAckEventDescription(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [event description]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [event description]")
         }
         case r: JixelAckUpdateCommType => {
           listener.foreach(l => l.onJixelAckUpdateCommType(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [comm type]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [comm type]")
         }
         case r: JixelAckUpdateCommTypeError => {
           listener.foreach(l => l.onJixelAckUpdateCommTypeError(r))
-          logger.info(Console.GREEN_B + Console.WHITE + "[MUSA] received ACK from Jixel [comm type ERROR]" + Console.RESET)
+          logger.info("[MUSA] received ACK from Jixel [comm type ERROR]")
         }
 
         case _ =>
           Config.verbose match {
-            case true => throw new Exception(Console.RED_B + Console.WHITE + s"[MUSA] Unhandled message: ${parsed}" + Console.RESET)
-            case _ => throw new Exception(Console.RED_B + Console.WHITE + s"[MUSA] Unhandled message:" + Console.RESET)
+            case true => throw new Exception(s"[MUSA] Unhandled message: ${parsed}")
+            case _ => throw new Exception(s"[MUSA] Unhandled message:")
           }
 
       }
     } catch {
       case e: Exception =>
-        logger.info(Console.RED_B + Console.WHITE + s"[MUSA] ERROR, cannot parse. Cause: ${e.toString}" + Console.RESET)
+        logger.info( s"[MUSA] ERROR, cannot parse. Cause: ${e.toString}")
     } finally {
       // ack the message received from jixel.
       ch.basicAck(delivery.getEnvelope.getDeliveryTag, false)
@@ -100,7 +100,7 @@ class MUSAConsumerCallback(val ch: Channel, val latch: CountDownLatch, val liste
         case true => logger.info(Console.BLUE_B + Console.YELLOW + s"[MUSA] Consumed message ${message}" + Console.RESET)
         case false => logger.info(Console.BLUE_B + Console.YELLOW + s"[MUSA] Consumed message from Jixel" + Console.RESET)
       }*/
-      logger.info(Console.BLUE_B + Console.YELLOW + s"[MUSA] Consumed message from Jixel" + Console.RESET)
+      logger.info(s"[MUSA] Consumed message from Jixel")
     }
   }
 }

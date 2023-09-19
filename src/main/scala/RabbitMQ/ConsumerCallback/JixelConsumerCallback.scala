@@ -46,9 +46,9 @@ class JixelConsumerCallback(val ch: Channel, val latch: CountDownLatch, val list
         case _ => throw new Exception("unhandled message")
       }
     } catch {
-      case e: Exception => println(Console.BLACK_B + Console.RED + s"[JIXEL] ERROR, cannot parse ${message}: ${e.toString}" + Console.RESET)
+      case e: Exception => println(s"[JIXEL] ERROR, cannot parse ${message}: ${e.toString}")
     } finally {
-      logger.info(Console.GREEN_B + Console.WHITE + "[JIXEL] acknowledge to MUSA")
+      logger.info("[JIXEL] acknowledge to MUSA")
       // ack the message received from MUSA.
       ch.basicAck(delivery.getEnvelope.getDeliveryTag, false)
 
